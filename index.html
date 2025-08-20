@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portfolio - Feri Ahmad Nurdin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -14,7 +17,20 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             line-height: 1.6;
-            transition: background-color 0.3s, color 0.3s;
+            transition: background-color 0.3s, color 0.3s, font-family 0.3s;
+        }
+
+        /* Font Family Options */
+        body.font-sans {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body.font-serif {
+            font-family: Georgia, 'Times New Roman', Times, serif;
+        }
+
+        body.font-mono {
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
         }
 
         /* Dark mode (default) */
@@ -36,11 +52,18 @@
             position: relative;
         }
 
-        /* Theme Toggle Button */
-        .theme-toggle {
+        /* Control Buttons */
+        .controls {
             position: fixed;
             top: 20px;
             right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        .control-button {
             background: #4a9eff;
             color: #ffffff;
             border: none;
@@ -48,23 +71,32 @@
             border-radius: 50%;
             cursor: pointer;
             font-size: 18px;
-            z-index: 1000;
             transition: background-color 0.3s, transform 0.2s;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .theme-toggle:hover {
+        .control-button:hover {
             background: #3a8ae6;
             transform: scale(1.1);
         }
 
-        .light .theme-toggle {
+        .light .control-button {
             background: #333;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
-        .light .theme-toggle:hover {
+        .light .control-button:hover {
             background: #555;
+        }
+
+        .font-toggle {
+            font-size: 14px;
+            font-weight: 600;
         }
 
         /* Profile Section */
@@ -86,7 +118,7 @@
 
         .profile-content h1 {
             font-size: 3.5rem;
-            font-weight: 700;
+            font-weight: 400;
             margin-bottom: 20px;
             line-height: 1.1;
         }
@@ -474,8 +506,11 @@
     </style>
 </head>
 <body class="dark">
-    <!-- Theme Toggle Button -->
-    <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+    <!-- Control Buttons -->
+    <div class="controls">
+        <button class="control-button" onclick="toggleTheme()" title="Toggle Theme">🌙</button>
+        <button class="control-button font-toggle" onclick="toggleFont()" title="Toggle Font">Aa</button>
+    </div>
 
     <div class="container">
         <!-- Profile Section -->
@@ -804,7 +839,7 @@
     <script>
         function toggleTheme() {
             const body = document.body;
-            const themeToggle = document.querySelector('.theme-toggle');
+            const themeToggle = document.querySelector('.controls .control-button:first-child');
             
             if (body.classList.contains('dark')) {
                 body.classList.remove('dark');
@@ -819,12 +854,37 @@
             }
         }
 
-        // Load saved theme on page load
+        function toggleFont() {
+            const body = document.body;
+            const fontToggle = document.querySelector('.font-toggle');
+            
+            if (body.classList.contains('font-mono')) {
+                body.classList.remove('font-mono');
+                body.classList.add('font-sans');
+                fontToggle.textContent = 'Aa';
+                localStorage.setItem('font', 'sans');
+            } else if (body.classList.contains('font-serif')) {
+                body.classList.remove('font-serif');
+                body.classList.add('font-mono');
+                fontToggle.textContent = '<>';
+                localStorage.setItem('font', 'mono');
+            } else {
+                body.classList.remove('font-sans');
+                body.classList.add('font-serif');
+                fontToggle.textContent = 'Aa';
+                localStorage.setItem('font', 'serif');
+            }
+        }
+
+        // Load saved preferences on page load
         document.addEventListener('DOMContentLoaded', function() {
             const savedTheme = localStorage.getItem('theme');
+            const savedFont = localStorage.getItem('font');
             const body = document.body;
-            const themeToggle = document.querySelector('.theme-toggle');
+            const themeToggle = document.querySelector('.controls .control-button:first-child');
+            const fontToggle = document.querySelector('.font-toggle');
             
+            // Load theme
             if (savedTheme === 'light') {
                 body.classList.remove('dark');
                 body.classList.add('light');
@@ -833,6 +893,20 @@
                 body.classList.remove('light');
                 body.classList.add('dark');
                 themeToggle.textContent = '🌙';
+            }
+
+            // Load font
+            if (savedFont === 'serif') {
+                body.classList.remove('font-sans');
+                body.classList.add('font-serif');
+                fontToggle.textContent = 'Aa';
+            } else if (savedFont === 'mono') {
+                body.classList.remove('font-sans');
+                body.classList.add('font-mono');
+                fontToggle.textContent = '<>';
+            } else {
+                body.classList.add('font-sans');
+                fontToggle.textContent = 'Aa';
             }
         });
     </script>
