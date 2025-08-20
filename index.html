@@ -3,10 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CV | Feri Ahmad Nurdin</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Portfolio - Feri Ahmad Nurdin</title>
     <style>
         * {
             margin: 0;
@@ -14,711 +11,828 @@
             box-sizing: border-box;
         }
 
-        html {
-            scroll-behavior: smooth;
-        }
-
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             line-height: 1.6;
-            transition: background-color 0.3s ease, color 0.3s ease;
+            transition: background-color 0.3s, color 0.3s;
         }
 
         /* Dark mode (default) */
         body.dark {
-            background-color: #000000;
+            background-color: #1a1a1a;
             color: #ffffff;
         }
 
         /* Light mode */
         body.light {
             background-color: #ffffff;
-            color: #000000;
+            color: #1a1a1a;
         }
 
         .container {
-            max-width: 1024px;
+            max-width: 800px;
             margin: 0 auto;
-            padding: 1rem;
+            padding: 20px;
+            position: relative;
         }
 
-        @media (min-width: 768px) {
-            .container {
-                padding: 2rem;
-            }
-        }
-
-        @media (min-width: 1024px) {
-            .container {
-                padding: 3rem;
-            }
-        }
-
+        /* Theme Toggle Button */
         .theme-toggle {
             position: fixed;
             top: 20px;
             right: 20px;
-            background: none;
-            border: 2px solid;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-            z-index: 1000;
-        }
-
-        .dark .theme-toggle {
-            border-color: #ffffff;
+            background: #4a9eff;
             color: #ffffff;
-        }
-
-        .light .theme-toggle {
-            border-color: #000000;
-            color: #000000;
+            border: none;
+            padding: 12px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            z-index: 1000;
+            transition: background-color 0.3s, transform 0.2s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
 
         .theme-toggle:hover {
+            background: #3a8ae6;
             transform: scale(1.1);
         }
 
-        .section {
-            margin-bottom: 3rem;
+        .light .theme-toggle {
+            background: #333;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
-        .section h2 {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-            padding-bottom: 0.5rem;
-            transition: color 0.3s ease, border-color 0.3s ease;
+        .light .theme-toggle:hover {
+            background: #555;
         }
 
-        .dark .section h2 {
-            color: #ffffff;
-            border-bottom: 1px solid #333333;
+        /* Profile Section */
+        .profile-section {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 40px;
+            margin-bottom: 40px;
+            padding: 40px 0;
+            border-bottom: 1px solid;
+            border-color: #333;
+            transition: border-color 0.3s;
+            align-items: start;
         }
 
-        .light .section h2 {
-            color: #000000;
-            border-bottom: 1px solid #cccccc;
+        .light .profile-section {
+            border-color: #e0e0e0;
         }
 
-        .skill-tag {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 500;
-            margin: 0.125rem;
-            border: 1px solid;
-            transition: all 0.3s ease;
+        .profile-content h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            line-height: 1.1;
         }
 
-        .dark .skill-tag {
-            background-color: #ffffff;
-            color: #000000;
-            border-color: #ffffff;
+        .profile-content .subtitle {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            opacity: 0.8;
+            line-height: 1.6;
         }
 
-        .light .skill-tag {
-            background-color: #000000;
-            color: #ffffff;
-            border-color: #000000;
+        .location {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 25px;
+            font-size: 1rem;
+            opacity: 0.8;
         }
 
-        .contact-link {
+        .location svg {
+            opacity: 0.6;
+        }
+
+        .profile-content a {
+            color: #4a9eff;
             text-decoration: none;
-            transition: color 0.2s;
+        }
+
+        .profile-content a:hover {
+            text-decoration: underline;
+        }
+
+        .social-links {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .social-icon {
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
-        }
-
-        .dark .contact-link {
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
             color: #ffffff;
+            text-decoration: none;
+            transition: background-color 0.2s, transform 0.2s;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        .light .contact-link {
-            color: #000000;
+        .light .social-icon {
+            background: rgba(0, 0, 0, 0.05);
+            color: #1a1a1a;
+            border-color: rgba(0, 0, 0, 0.1);
         }
 
-        .dark .contact-link:hover {
-            color: #cccccc;
+        .social-icon:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            text-decoration: none;
         }
 
-        .light .contact-link:hover {
-            color: #333333;
+        .light .social-icon:hover {
+            background: rgba(0, 0, 0, 0.1);
         }
 
-        .work-item {
-            margin-bottom: 2rem;
-            padding: 1.5rem;
-            border-radius: 0.5rem;
-            border: 1px solid;
-            transition: all 0.3s ease;
+        .social-icon svg {
+            width: 20px;
+            height: 20px;
         }
 
-        .dark .work-item {
-            background-color: #111111;
-            border-color: #333333;
+        .profile-image {
+            text-align: center;
         }
 
-        .light .work-item {
-            background-color: #f8f8f8;
-            border-color: #cccccc;
+        .profile-image img {
+            width: 100%;
+            max-width: 280px;
+            border-radius: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            transition: border-color 0.3s;
         }
 
-        .work-header {
+        .light .profile-image img {
+            border-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .bio-section {
+            margin: 30px 0;
+            padding: 30px 0;
+            border-bottom: 1px solid;
+            border-color: #333;
+            transition: border-color 0.3s;
+        }
+
+        .light .bio-section {
+            border-color: #e0e0e0;
+        }
+
+        .bio-section p {
+            font-size: 16px;
+            line-height: 1.7;
+            opacity: 0.8;
+        }
+
+        .tech-stack {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .tech-stack img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 12px;
+        }
+
+        /* Gallery Section */
+        .gallery-header {
+            margin-bottom: 30px;
+        }
+
+        .gallery-header h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .gallery-header p {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            opacity: 0.8;
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .project-card {
+            background: #2a2a2a;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s, background-color 0.3s, border-color 0.3s;
+            border: 1px solid #333;
+        }
+
+        .light .project-card {
+            background: #ffffff;
+            border-color: #e0e0e0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .project-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .dark .project-card:hover {
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .light .project-card:hover {
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .project-image {
+            width: 100%;
+            height: 200px;
+            background: #333;
             display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 1rem;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            transition: background-color 0.3s;
         }
 
-        .work-title {
-            font-weight: 600;
-            font-size: 1.1rem;
-            transition: color 0.3s ease;
+        .light .project-image {
+            background: #f5f5f5;
         }
 
-        .dark .work-title {
-            color: #ffffff;
+        .project-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background: #ffffff;
         }
 
-        .light .work-title {
-            color: #000000;
+        .project-image.placeholder {
+            background: linear-gradient(135deg, #333 0%, #444 100%);
+            color: #666;
+            font-size: 14px;
         }
 
-        .work-company {
-            font-weight: 500;
-            transition: color 0.3s ease;
+        .light .project-image.placeholder {
+            background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%);
+            color: #999;
         }
 
-        .dark .work-company {
-            color: #ffffff;
+        .project-content {
+            padding: 24px;
         }
 
-        .light .work-company {
-            color: #000000;
-        }
-
-        .work-period {
-            font-size: 0.9rem;
-            text-align: right;
-            transition: color 0.3s ease;
-        }
-
-        .dark .work-period {
-            color: #cccccc;
-        }
-
-        .light .work-period {
-            color: #666666;
-        }
-
-        .work-location {
-            padding: 0.25rem 0.5rem;
-            border-radius: 0.25rem;
-            font-size: 0.75rem;
-            margin-top: 0.25rem;
-            display: inline-block;
-            transition: all 0.3s ease;
-        }
-
-        .dark .work-location {
-            background-color: #333333;
-            color: #cccccc;
-        }
-
-        .light .work-location {
-            background-color: #e5e5e5;
-            color: #666666;
-        }
-
-        .project-item {
-            margin-bottom: 2rem;
-            padding: 1.5rem;
-            border-radius: 0.5rem;
-            border: 1px solid;
-            transition: all 0.3s ease;
-        }
-
-        .dark .project-item {
-            background-color: #111111;
-            border-color: #333333;
-        }
-
-        .light .project-item {
-            background-color: #f8f8f8;
-            border-color: #cccccc;
+        .project-header {
+            margin-bottom: 16px;
         }
 
         .project-title {
+            font-size: 18px;
             font-weight: 600;
-            font-size: 1.1rem;
-            margin-bottom: 0.5rem;
-            transition: color 0.3s ease;
+            line-height: 1.3;
         }
 
-        .dark .project-title {
-            color: #ffffff;
+        .project-description {
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 20px;
+            opacity: 0.8;
         }
 
-        .light .project-title {
-            color: #000000;
-        }
-
-        .project-client {
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
-            transition: color 0.3s ease;
-        }
-
-        .dark .project-client {
-            color: #cccccc;
-        }
-
-        .light .project-client {
-            color: #666666;
-        }
-
-        .avatar {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid;
-            transition: border-color 0.3s ease;
-        }
-
-        .dark .avatar {
-            border-color: #666666;
-        }
-
-        .light .avatar {
-            border-color: #cccccc;
-        }
-
-        .header-section {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 3rem;
-            gap: 2rem;
-        }
-
-        .header-content {
-            flex: 1;
-            text-align: left;
-        }
-
-        .header-avatar {
-            flex-shrink: 0;
-        }
-
-        .name {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            transition: color 0.3s ease;
-        }
-
-        .dark .name {
-            color: #ffffff;
-        }
-
-        .light .name {
-            color: #000000;
-        }
-
-        .title {
-            font-size: 1rem;
-            margin-bottom: 1rem;
-            transition: color 0.3s ease;
-        }
-
-        .dark .title {
-            color: #cccccc;
-        }
-
-        .light .title {
-            color: #666666;
-        }
-
-        .description {
-            margin-bottom: 2rem;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            transition: color 0.3s ease;
-        }
-
-        .dark .description {
-            color: #cccccc;
-        }
-
-        .light .description {
-            color: #666666;
-        }
-
-        .contact-info {
+        .project-tags {
             display: flex;
             flex-wrap: wrap;
-            justify-content: flex-start;
-            gap: 1rem;
+            gap: 8px;
             margin-bottom: 0;
         }
 
-        .contact-item {
+        .project-bottom {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 0.4rem;
-            font-size: 0.9rem;
+            margin-top: 16px;
         }
 
-        .icon {
-            width: 1.25rem;
-            height: 1.25rem;
-            fill: currentColor;
+        .project-actions {
+            display: flex;
+        }
+
+        .doc-button {
+            background: #4a9eff;
+            color: #ffffff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .doc-button:hover {
+            background: #3a8ae6;
+        }
+
+        .doc-button:visited {
+            color: #ffffff;
+        }
+
+        .tag {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            color: #ffffff;
+        }
+
+        .tag.github { background-color: #e74c3c; }
+        .tag.github-action { background-color: #27ae60; }
+        .tag.argocd { background-color: #3498db; }
+        .tag.docker { background-color: #27ae60; }
+        .tag.gitlab { background-color: #3498db; }
+        .tag.harbor { background-color: #e74c3c; }
+        .tag.kubernetes { background-color: #f39c12; }
+        .tag.trivy { background-color: #95a5a6; }
+        .tag.atlantis { background-color: #e91e63; }
+        .tag.gcp { background-color: #ff9800; }
+        .tag.iaas { background-color: #607d8b; }
+        .tag.terraform { background-color: #8d4004; }
+        .tag.vm { background-color: #ff9800; }
+        .tag.ansible { background-color: #e91e63; }
+        .tag.kubeadm { background-color: #9c27b0; }
+        .tag.mongodb { background-color: #607d8b; }
+        .tag.ubuntu { background-color: #27ae60; }
+        .tag.keycloak { background-color: #607d8b; }
+        .tag.rke { background-color: #e91e63; }
+        .tag.rancher { background-color: #e91e63; }
+        .tag.grafana { background-color: #607d8b; }
+        .tag.prometheus { background-color: #607d8b; }
+        .tag.uptime { background-color: #f39c12; }
+        .tag.aws { background-color: #ff9800; }
+        .tag.cdn { background-color: #9c27b0; }
+        .tag.cloudflare { background-color: #607d8b; }
+        .tag.cloudfront { background-color: #3498db; }
+        .tag.s3 { background-color: #27ae60; }
+        .tag.automation { background-color: #e74c3c; }
+        .tag.firebase { background-color: #95a5a6; }
+        .tag.n8n { background-color: #95a5a6; }
+
+        .footer-link {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 40px;
+            border-top: 1px solid;
+            border-color: #333;
+            transition: border-color 0.3s;
+        }
+
+        .light .footer-link {
+            border-color: #e0e0e0;
+        }
+
+        .footer-link a {
+            color: #4a9eff;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .footer-link a:hover {
+            text-decoration: underline;
+        }
+
+        .copyright {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid;
+            border-color: #333;
+            font-size: 14px;
+            opacity: 0.6;
+            transition: border-color 0.3s;
+        }
+
+        .light .copyright {
+            border-color: #e0e0e0;
         }
 
         @media (max-width: 768px) {
-            .container {
-                padding: 1rem;
-            }
-            .header-section {
-                flex-direction: column;
+            .profile-section {
+                grid-template-columns: 1fr;
                 text-align: center;
-                gap: 1.5rem;
+                gap: 30px;
+                padding: 30px 0;
             }
-            .header-content {
-                text-align: center;
+
+            .profile-content h1 {
+                font-size: 2.5rem;
             }
-            .name {
-                font-size: 2rem;
+
+            .profile-content .subtitle {
+                font-size: 1rem;
             }
-            .work-header {
-                flex-direction: column;
-                gap: 0.5rem;
-            }
-            .work-period {
-                text-align: left;
-            }
-            .contact-info {
+
+            .location {
                 justify-content: center;
             }
-        }
 
-        .skills-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-        }
+            .social-links {
+                justify-content: center;
+            }
 
-        .skills-grid .skill-tag {
-            font-size: 0.875rem;
+            .profile-image img {
+                max-width: 250px;
+            }
+
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 20px;
+            }
         }
     </style>
 </head>
 <body class="dark">
     <!-- Theme Toggle Button -->
-    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
-        <svg id="sun-icon" class="icon" style="display: none;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd" />
-        </svg>
-        <svg id="moon-icon" class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
-        </svg>
-    </button>
+    <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
 
     <div class="container">
-        <!-- Header Section -->
-        <header class="header-section">
-            <div class="header-content">
-                <h1 class="name">Feri Ahmad Nurdin</h1>
-                <p class="title">DevOps Engineer with experience driving infrastructure excellence at scale. Proven track record of reducing cloud costs by 80%, handling 80K+ requests/sec with zero downtime, and leading high-performing DevOps teams across government and enterprise environments.</p>
-                
-                <div class="contact-info">
-                    <div class="contact-item">
-                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 00.281-.14c.186-.096.446-.24.757-.433.62-.384 1.445-.966 2.274-1.765C15.302 14.988 17 12.493 17 9A7 7 0 103 9c0 3.492 1.698 5.988 3.355 7.584a13.731 13.731 0 002.274 1.765 11.842 11.842 0 00.757.433.57.57 0 00.281.14l.018.008.006.003zM10 11.25a2.25 2.25 0 100-4.5 2.25 2.25 0 000 4.5z" clip-rule="evenodd" />
+        <!-- Profile Section -->
+        <div class="profile-section">
+            <div class="profile-content">
+                <h1>Feri Ahmad Nurdin</h1>
+                <p class="subtitle">DevOps & Site Reliability Engineer passionate about automation, scalability, and building reliable infrastructure that empowers development teams.</p>
+                <div class="location">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                    </svg>
+                    Bandung, West Java, Indonesia
+                </div>
+                <div class="social-links">
+                    <!-- <a href="#" class="social-icon" target="_blank" title="Calendar">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/>
                         </svg>
-                        <span>Bandung, Indonesia</span>
-                    </div>
-                    
-                    <a href="https://kangdeploy.web.id" class="contact-link contact-item">
-                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M4.25 5.5a.75.75 0 00-.75.75v8.5c0 .414.336.75.75.75h8.5a.75.75 0 00.75-.75v-4a.75.75 0 011.5 0v4A2.25 2.25 0 0112.75 17h-8.5A2.25 2.25 0 012 14.75v-8.5A2.25 2.25 0 014.25 4h5a.75.75 0 010 1.5h-5z" clip-rule="evenodd" />
-                            <path fill-rule="evenodd" d="M6.194 12.753a.75.75 0 001.06.053L16.5 4.44v2.81a.75.75 0 001.5 0v-4.5a.75.75 0 00-.75-.75h-4.5a.75.75 0 000 1.5h2.553l-9.056 8.194a.75.75 0 00-.053 1.06z" clip-rule="evenodd" />
+                    </a> -->
+                    <a href="mailto:feri.ahmaddd@gmail.com" class="social-icon" target="_blank" title="Email">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
                         </svg>
-                        <span>kangdeploy.web.id</span>
                     </a>
-                    
-                    <a href="mailto:feri.ahmaddd@gmail.com" class="contact-link contact-item">
-                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                            <path d="M3 4a2 2 0 00-2 2v1.161l8.441 4.221a1.25 1.25 0 001.118 0L19 7.162V6a2 2 0 00-2-2H3z" />
-                            <path d="M19 8.839l-7.77 3.885a2.75 2.75 0 01-2.46 0L1 8.839V14a2 2 0 002 2h14a2 2 0 002-2V8.839z" />
+                    <!-- <a href="tel:+6281234567890" class="social-icon" target="_blank" title="Phone">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
                         </svg>
-                        <span>Email</span>
-                    </a>
-                    
-                    <a href="https://linkedin.com/in/feri-ahmad" target="_blank" class="contact-link contact-item">
-                        <svg class="icon" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z"/>
+                    </a> -->
+                    <a href="#" class="social-icon" target="_blank" title="Website">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/>
                         </svg>
-                        <span>LinkedIn</span>
                     </a>
-                    
-                    <a href="https://github.com/feriahmad" target="_blank" class="contact-link contact-item">
-                        <svg class="icon" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+                    <a href="https://github.com/feriahmad" class="social-icon" target="_blank" title="GitHub">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
                         </svg>
-                        <span>GitHub</span>
                     </a>
+                    <a href="https://www.linkedin.com/in/feri-ahmad/" class="social-icon" target="_blank" title="LinkedIn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                        </svg>
+                    </a>
+                    <!-- <a href="#" class="social-icon" target="_blank" title="Telegram">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+                        </svg>
+                    </a> -->
                 </div>
             </div>
-            
-            <div class="header-avatar">
-                <img src="https://avatars.githubusercontent.com/u/93630456?s=400&u=c96e10eedf434bc0ff9932682228cdec435d93f0&v=4" 
-                     alt="Feri Ahmad Nurdin" 
-                     class="avatar">
+            <div class="profile-image">
+                <img src="assets/Profile_Feri.png" alt="Feri Ahmad Nurdin">
             </div>
-        </header>
+        </div>
 
-        <!-- About Section -->
-        <section class="section">
-            <h2>About</h2>
+        <!-- Bio Section -->
+        <div class="bio-section">
             <p>DevOps professional with a proven track record of 5 years of experience driving efficiency and performance improvements across multiple IT environments. Expert in implementing CI/CD pipelines and microservices architectures, resulting in significant cost reductions and productivity improvements. With a flair for driving cross-functional collaboration and a passion for innovation, I am ready to leverage my skills to drive technology excellence in my next role.</p>
-        </section>
+        </div>
 
-        <!-- Work Experience Section -->
-        <section class="section">
-            <h2>Work Experience</h2>
+        <!-- Gallery Section -->
+        <div class="gallery-header">
+            <h2>Featured Projects</h2>
+            <p>This is a showcase of my journey as a DevOps Engineer, highlighting the projects and practices I've explored. Each project reflects my continuous learning, hands-on experimentation, and commitment to building scalable, reliable, and cost-efficient infrastructures. While not everything is perfect, these works represent my progress and growth along the way. And below is the tech I've been using so far and am familiar with:</p>
             
-            <div class="work-item">
-                <div class="work-header">
-                    <div>
-                        <div class="work-company">Jabar Digital Service</div>
-                        <div class="work-location">On-site</div>
+            <div class="tech-stack">
+                <img src="assets/Tech_Stack_DevOps_(2).png" alt="Tech Stack">
+            </div>
+        </div>
+
+        <!-- Projects Grid -->
+        <div class="projects-grid">
+            <!-- Project 1: Implement Reusable Workflow Github Action -->
+            <div class="project-card">
+                <div class="project-image">
+                    <img src="assets/Featured Project 255c835495868196a73df195b9df6506/Implement Reusable Workflow Github Action 255c83549586803687f9d9ab11abbfe5/reusable_workflow.png" alt="Reusable Workflow">
+                </div>
+                <div class="project-content">
+                    <div class="project-header">
+                        <h3 class="project-title">Implement Reusable Workflow Github Action</h3>
                     </div>
-                    <div class="work-period">Mar, 2023 — Present</div>
-                </div>
-                <div class="work-title">Senior Site Reliability Engineer</div>
-                <ul style="margin: 1rem 0; padding-left: 1.5rem;">
-                    <li>Spearheaded the CI/CD pipeline implementation for key products like <strong>Sapawarga</strong> and <strong>Portal Jabar</strong>, accelerating software releases by 40%.</li>
-                    <li>Led a cost-saving initiative that reduced public cloud storage expenses by up to 80%.</li>
-                    <li>Engineered the infrastructure for <strong>PPDB Jabar</strong>, successfully handling over 80,000 requests/sec with zero downtime.</li>
-                    <li>Managed and mentored a team of 4 DevOps engineers, boosting team productivity by 25%.</li>
-                </ul>
-                <div>
-                    <span class="skill-tag">GCP</span>
-                    <span class="skill-tag">AWS</span>
-                    <span class="skill-tag">Kubernetes</span>
-                    <span class="skill-tag">CI/CD</span>
-                    <span class="skill-tag">Terraform</span>
-                    <span class="skill-tag">Elasticsearch</span>
-                </div>
-            </div>
-
-            <div class="work-item">
-                <div class="work-header">
-                    <div>
-                        <div class="work-company">Jabar Digital Service</div>
-                        <div class="work-location">On-site</div>
+                    <p class="project-description">Implemented reusable CI/CD workflows using GitHub Actions to standardize build, test, and deployment pipelines across multiple projects. This reduced duplication, improved maintainability, and streamlined the development lifecycle.</p>
+                    <div class="project-bottom">
+                        <div class="project-tags">
+                            <span class="tag github">Github</span>
+                            <span class="tag github-action">Github-Action</span>
+                            <span class="tag argocd">ArgoCD</span>
+                            <span class="tag docker">Docker</span>
+                        </div>
+                        <div class="project-actions">
+                            <a href="https://github.com/jabardigitalservice/workflow-super-app" target="_blank" class="doc-button">
+                                📄 Full Documentation
+                            </a>
+                        </div>
                     </div>
-                    <div class="work-period">Nov, 2021 — Feb, 2023</div>
-                </div>
-                <div class="work-title">Site Reliability Engineer</div>
-                <ul style="margin: 1rem 0; padding-left: 1.5rem;">
-                    <li>Led the migration of critical infrastructure from VMware ESX to a Virtual Data Center (VDC).</li>
-                    <li>Automated scaling for the <strong>Sidebar Application</strong>, cutting GCP virtual machine costs by 40%.</li>
-                    <li>Established a full-stack observability platform using Prometheus, Grafana, and the ELK Stack.</li>
-                </ul>
-                <div>
-                    <span class="skill-tag">VMware</span>
-                    <span class="skill-tag">GCP</span>
-                    <span class="skill-tag">Prometheus</span>
-                    <span class="skill-tag">Grafana</span>
-                    <span class="skill-tag">New Relic</span>
-                    <span class="skill-tag">Automation</span>
                 </div>
             </div>
 
-            <div class="work-item">
-                <div class="work-header">
-                    <div>
-                        <div class="work-company">PT Satu Visi Kreasi Indonesia</div>
-                        <div class="work-location">On-site</div>
+            <!-- Project 2: Pipeline CI/CD with GitOps -->
+            <div class="project-card">
+                <div class="project-image">
+                    <img src="assets/Featured Project 255c835495868196a73df195b9df6506/Pipeline CI CD with GitOps 255c8354958681ea806bd7f8c7f45f8f/CI_CD_Pipeline_JSA-Deploy_JSA.drawio.png" alt="CI/CD Pipeline">
+                </div>
+                <div class="project-content">
+                    <div class="project-header">
+                        <h3 class="project-title">Pipeline CI/CD with GitOps</h3>
                     </div>
-                    <div class="work-period">Sep, 2020 — Nov, 2021</div>
-                </div>
-                <div class="work-title">DevOps Engineer</div>
-                <ul style="margin: 1rem 0; padding-left: 1.5rem;">
-                    <li>Architected and managed a multi-tenant Kubernetes environment for the <strong>SIMAK Akademik</strong> platform, serving over 300 schools.</li>
-                    <li>Automated the invoice email system, which reduced manual intervention by 90%.</li>
-                    <li>Managed high-traffic infrastructure for <strong>PPDB Kota Malang</strong>, handling up to 10,000 requests per second.</li>
-                </ul>
-                <div>
-                    <span class="skill-tag">Kubernetes</span>
-                    <span class="skill-tag">Docker</span>
-                    <span class="skill-tag">PostgreSQL</span>
-                    <span class="skill-tag">CI/CD</span>
-                    <span class="skill-tag">Multi-tenancy</span>
-                </div>
-            </div>
-        </section>
-
-        <!-- Skills Section -->
-        <section class="section">
-            <h2>Skills</h2>
-            <div class="skills-grid">
-                <span class="skill-tag">AWS</span>
-                <span class="skill-tag">GCP</span>
-                <span class="skill-tag">Azure</span>
-                <span class="skill-tag">Kubernetes</span>
-                <span class="skill-tag">Docker</span>
-                <span class="skill-tag">Terraform</span>
-                <span class="skill-tag">Ansible</span>
-                <span class="skill-tag">Jenkins</span>
-                <span class="skill-tag">GitHub Actions</span>
-                <span class="skill-tag">GitLab CI</span>
-                <span class="skill-tag">Prometheus</span>
-                <span class="skill-tag">Grafana</span>
-                <span class="skill-tag">ELK Stack</span>
-                <span class="skill-tag">Linux</span>
-                <span class="skill-tag">Ubuntu</span>
-                <span class="skill-tag">CentOS</span>
-                <span class="skill-tag">Python</span>
-                <span class="skill-tag">Bash</span>
-                <span class="skill-tag">YAML</span>
-                <span class="skill-tag">Git</span>
-                <span class="skill-tag">VMware</span>
-                <span class="skill-tag">PostgreSQL</span>
-                <span class="skill-tag">Elasticsearch</span>
-                <span class="skill-tag">New Relic</span>
-                <span class="skill-tag">NGINX</span>
-                <span class="skill-tag">Cloudflare</span>
-                <span class="skill-tag">FluxCD</span>
-                <span class="skill-tag">ArgoCD</span>
-                <span class="skill-tag">GitOps</span>
-                <span class="skill-tag">DevSecOps</span>
-                <span class="skill-tag">Infrastructure as Code</span>
-                <span class="skill-tag">CI/CD</span>
-                <span class="skill-tag">Monitoring</span>
-                <span class="skill-tag">Automation</span>
-                <span class="skill-tag">Security</span>
-                <span class="skill-tag">Multi-tenancy</span>
-                <span class="skill-tag">High Availability</span>
-                <span class="skill-tag">Load Balancing</span>
-                <span class="skill-tag">Disaster Recovery</span>
-            </div>
-        </section>
-
-        <!-- Projects Section -->
-        <section class="section">
-            <h2>Projects</h2>
-            
-            <div class="project-item">
-                <div class="project-title">GitOps Workflow Implementation</div>
-                <div class="project-client">PT STARA Indonesia (BPDLH, Kemenkeu)</div>
-                <p>Pioneered GitOps workflows using FluxCD and ArgoCD, decreasing deployment frequency from weekly to daily and reducing rollback rate by 15%.</p>
-                <div style="margin-top: 1rem;">
-                    <span class="skill-tag">GitOps</span>
-                    <span class="skill-tag">FluxCD</span>
-                    <span class="skill-tag">ArgoCD</span>
-                    <span class="skill-tag">Kubernetes</span>
-                    <span class="skill-tag">Nginx</span>
+                    <p class="project-description">Designed and implemented a CI/CD pipeline using GitOps principles with GitLab and ArgoCD. The pipeline integrates Harbor as a container registry, Trivy for vulnerability scanning, and Kubernetes for automated deployments, ensuring secure, consistent, and scalable application delivery. The release flow consists of two phases: for staging, code successfully built and tested in GitLab Actions is automatically synced to ArgoCD and deployed to the staging environment; for production, a Merge Request is created and reviewed by DevOps or a Lead before being promoted to the live environment.</p>
+                    <div class="project-tags">
+                        <span class="tag gitlab">Gitlab</span>
+                        <span class="tag github">Github</span>
+                        <span class="tag argocd">ArgoCD</span>
+                        <span class="tag harbor">Harbor</span>
+                        <span class="tag kubernetes">Kubernetes</span>
+                        <span class="tag trivy">Trivy</span>
+                    </div>
                 </div>
             </div>
 
-            <div class="project-item">
-                <div class="project-title">Secure Application Delivery</div>
-                <div class="project-client">PT STARA Indonesia (Tipidkor)</div>
-                <p>Led the implementation of Cloudflare Tunneling to simplify application exposure and configured rate limiting in Nginx for production.</p>
-                <div style="margin-top: 1rem;">
-                    <span class="skill-tag">Cloudflare</span>
-                    <span class="skill-tag">Docker Swarm</span>
-                    <span class="skill-tag">Nginx</span>
-                    <span class="skill-tag">Portainer</span>
-                    <span class="skill-tag">Security</span>
+            <!-- Project 3: Provisioning VM Instance GCP -->
+            <div class="project-card">
+                <div class="project-image">
+                    <img src="assets/Featured Project 255c835495868196a73df195b9df6506/Provisioning VM Instance GCP with Terraform & Atla 255c83549586803d9a92dd42266fc696/Screenshot_2025-08-20_at_10.22.18.png" alt="GCP Terraform">
+                </div>
+                <div class="project-content">
+                    <div class="project-header">
+                        <h3 class="project-title">Provisioning VM Instance GCP with Terraform & Atlantis</h3>
+                    </div>
+                    <p class="project-description">Implemented Infrastructure as Code (IaC) by provisioning VM instances in Google Cloud Platform (GCP) using Terraform, integrated with Atlantis for automated plan and apply workflows. This setup enabled consistent, auditable, and collaborative infrastructure management through GitOps practices.</p>
+                    <div class="project-bottom">
+                        <div class="project-tags">
+                            <span class="tag atlantis">Atlantis</span>
+                            <span class="tag gcp">GCP</span>
+                            <span class="tag iaas">IaaS</span>
+                            <span class="tag terraform">Terraform</span>
+                            <span class="tag vm">VM</span>
+                        </div>
+                        <div class="project-actions">
+                            <a href="https://github.com/feriahmad/terraform-gcp-vm-instance" target="_blank" class="doc-button">
+                                📄 Full Documentation
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="project-item">
-                <div class="project-title">PPDB Jabar Infrastructure</div>
-                <div class="project-client">Jabar Digital Service</div>
-                <p>Engineered and managed the infrastructure for PPDB Jabar (West Java Student Admission System), successfully handling over 80,000 requests per second with zero downtime during peak admission periods.</p>
-                <div style="margin-top: 1rem;">
-                    <span class="skill-tag">Kubernetes</span>
-                    <span class="skill-tag">GCP</span>
-                    <span class="skill-tag">Load Balancing</span>
-                    <span class="skill-tag">Auto Scaling</span>
-                    <span class="skill-tag">High Availability</span>
+            <!-- Project 4: Kubernetes Cluster Deployment -->
+            <div class="project-card">
+                <div class="project-image">
+                    <img src="assets/Featured Project 255c835495868196a73df195b9df6506/Kubernetes Cluster Deployment with Ansible and Kub 255c835495868070aeb7ebe8c150109b/Screenshot_2025-08-20_at_10.16.21.png" alt="Kubernetes Cluster">
+                </div>
+                <div class="project-content">
+                    <div class="project-header">
+                        <h3 class="project-title">Kubernetes Cluster Deployment with Ansible and Kubeadm</h3>
+                    </div>
+                    <p class="project-description">Deployed a Kubernetes cluster using Ansible and Kubeadm to automate the provisioning and configuration process. This project demonstrated Infrastructure as Code practices, enabling consistent cluster setup, reduced manual intervention, and improved reliability for multi-node environments.</p>
+                    <div class="project-bottom">
+                        <div class="project-tags">
+                            <span class="tag ansible">Ansible</span>
+                            <span class="tag docker">Docker</span>
+                            <span class="tag kubeadm">Kubeadm</span>
+                            <span class="tag kubernetes">Kubernetes</span>
+                        </div>
+                        <div class="project-actions">
+                            <a href="https://github.com/feriahmad/k8s-kubeadm-ansible" target="_blank" class="doc-button">
+                                📄 Full Documentation
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="project-item">
-                <div class="project-title">SIMAK Akademik Multi-Tenant Platform</div>
-                <div class="project-client">PT Satu Visi Kreasi Indonesia</div>
-                <p>Architected and managed a multi-tenant Kubernetes environment for the SIMAK Akademik platform, serving over 300 schools with isolated environments and automated resource management.</p>
-                <div style="margin-top: 1rem;">
-                    <span class="skill-tag">Kubernetes</span>
-                    <span class="skill-tag">Multi-tenancy</span>
-                    <span class="skill-tag">Docker</span>
-                    <span class="skill-tag">PostgreSQL</span>
-                    <span class="skill-tag">Resource Management</span>
+            <!-- Project 5: MongoDB with Ansible -->
+            <div class="project-card">
+                <div class="project-image">
+                    <img src="assets/Featured Project 255c835495868196a73df195b9df6506/Proisioning MongoDB with Ansible (Install, Backup, 255c8354958680e4acf0c6453c0afec9/Screenshot_2025-08-20_at_10.35.27.png" alt="MongoDB Ansible">
+                </div>
+                <div class="project-content">
+                    <div class="project-header">
+                        <h3 class="project-title">Provisioning MongoDB with Ansible (Install, Backup, Restore & Hardening)</h3>
+                    </div>
+                    <p class="project-description">Automated MongoDB provisioning and management using Ansible, covering installation, backup, restore, and security hardening. This project demonstrated Infrastructure as Code practices to ensure consistent deployments, reliable data recovery, and improved database security.</p>
+                    <div class="project-bottom">
+                        <div class="project-tags">
+                            <span class="tag ansible">Ansible</span>
+                            <span class="tag mongodb">MongoDB</span>
+                            <span class="tag ubuntu">Ubuntu</span>
+                        </div>
+                        <div class="project-actions">
+                            <a href="https://github.com/feriahmad/mongodb-ansible" target="_blank" class="doc-button">
+                                📄 Full Documentation
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </section>
+
+            <!-- Project 6: User Access Control -->
+            <div class="project-card">
+                <div class="project-image">
+                    <img src="assets/Featured Project 255c835495868196a73df195b9df6506/Management User Access Control Kubernetes with Ran 255c8354958681458eefdfb200316bff/rancher.webp" alt="Rancher Keycloak">
+                </div>
+                <div class="project-content">
+                    <div class="project-header">
+                        <h3 class="project-title">Management User Access Control Kubernetes with Rancher & Keycloak</h3>
+                    </div>
+                    <p class="project-description">Implemented centralized user access control for Kubernetes clusters by integrating Rancher with Keycloak as an Identity Provider. This project enabled Role-Based Access Control (RBAC), Single Sign-On (SSO), and secure authentication management across multiple clusters. The focus was on providing developers with direct access to product-specific clusters, making it easier to perform debugging and execute commands when needed.</p>
+                    <div class="project-bottom">
+                        <div class="project-tags">
+                            <span class="tag keycloak">Keycloak</span>
+                            <span class="tag kubernetes">Kubernetes</span>
+                            <span class="tag rke">RKE</span>
+                            <span class="tag rancher">Rancher</span>
+                        </div>
+                        <div class="project-actions">
+                            <a href="https://medium.com/jds-engineering/management-user-access-control-kubernetes-with-rancher-keycloak-b4e2ba5c35a0" target="_blank" class="doc-button">
+                                📄 Full Documentation
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project 7: Observability with LGTM Stack -->
+            <div class="project-card">
+                <div class="project-image">
+                    <img src="assets/Featured Project 255c835495868196a73df195b9df6506/Observability with LGTM Stack 255c8354958681f29725cd488566ada3/Screenshot_2025-08-20_at_09.13.31.png" alt="LGTM Stack">
+                </div>
+                <div class="project-content">
+                    <div class="project-header">
+                        <h3 class="project-title">Observability with LGTM Stack</h3>
+                    </div>
+                    <p class="project-description">Developed a monitoring and alerting system using Prometheus and Grafana to improve application observability. The setup enabled real-time metrics collection, visualization, and proactive alerting, reducing incident response time and improving system reliability.</p>
+                    <div class="project-tags">
+                        <span class="tag grafana">Grafana</span>
+                        <span class="tag prometheus">Prometheus</span>
+                        <span class="tag uptime">Uptime</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project 8: Reduce Cost with CDN -->
+            <div class="project-card">
+                <div class="project-image">
+                    <img src="assets/Featured Project 255c835495868196a73df195b9df6506/Reduce Cost Up to 80% GCP with CDN 255c835495868059b674e8052fee01b6/ChatGPT_Image_Aug_20_2025_11_33_00_AM.png" alt="CDN Cost Reduction">
+                </div>
+                <div class="project-content">
+                    <div class="project-header">
+                        <h3 class="project-title">Reduce Cost Up to 80% GCP with CDN</h3>
+                    </div>
+                    <p class="project-description">Reduced cloud infrastructure costs by up to 80% through the integration of Cloudflare CDN with GCP. This approach not only optimized expenses but also enhanced application speed, availability, and security. The project utilized Firebase for hosting, Amazon S3 for storage, and Cloudflare for CDN and caching.</p>
+                    <div class="project-tags">
+                        <span class="tag aws">AWS</span>
+                        <span class="tag cdn">CDN</span>
+                        <span class="tag cloudflare">Cloudflare</span>
+                        <span class="tag cloudfront">Cloudfront</span>
+                        <span class="tag gcp">GCP</span>
+                        <span class="tag s3">S3</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project 9: Automation Scheduler -->
+            <div class="project-card">
+                <div class="project-image">
+                    <img src="assets/Featured Project 255c835495868196a73df195b9df6506/Automation Scheduler Maintenance Page Sapawarga Mo 255c835495868084b8e8edd2db0616bf/Screenshot_2025-08-20_at_11.16.42.png" alt="Automation Scheduler">
+                </div>
+                <div class="project-content">
+                    <div class="project-header">
+                        <h3 class="project-title">Automation Scheduler Maintenance Page Sapawarga Mobile Apps</h3>
+                    </div>
+                    <p class="project-description">Developed an automation workflow with n8n to schedule and trigger maintenance mode in Sapawarga Mobile Apps by updating Firebase values. This eliminated manual late-night interventions by QA/PM, reduced overtime, and streamlined the process of activating maintenance pages during incidents or planned events.</p>
+                    <div class="project-bottom">
+                        <div class="project-tags">
+                            <span class="tag automation">Automation</span>
+                            <span class="tag firebase">Firebase</span>
+                            <span class="tag n8n">n8n</span>
+                        </div>
+                        <div class="project-actions">
+                            <a href="https://n8n.digitalservice.id/workflow/T4Cx2ZRiEzHR9omv" target="_blank" class="doc-button">
+                                📄 Full Documentation
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project 10: Install ArgoCD with Terraform -->
+            <div class="project-card">
+                <div class="project-image">
+                    <img src="assets/Featured Project 255c835495868196a73df195b9df6506/Install ArgoCD with Terraform 255c835495868091a0eec6e6facad641/Screenshot_2025-08-20_at_14.13.16.png" alt="ArgoCD Terraform">
+                </div>
+                <div class="project-content">
+                    <div class="project-header">
+                        <h3 class="project-title">Install ArgoCD with Terraform</h3>
+                    </div>
+                    <p class="project-description">This project demonstrates the integration of Terraform with ArgoCD to automate Kubernetes deployments through GitOps practices. It highlights my ability to build scalable, reliable, and consistent infrastructure using Infrastructure as Code principles.</p>
+                    <div class="project-bottom">
+                        <div class="project-tags">
+                            <span class="tag argocd">ArgoCD</span>
+                            <span class="tag kubernetes">Kubernetes</span>
+                            <span class="tag terraform">Terraform</span>
+                        </div>
+                        <div class="project-actions">
+                            <a href="https://github.com/feriahmad/argocd-terraform" target="_blank" class="doc-button">
+                                📄 Full Documentation
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer-link">
+            <a href="https://github.com/feriahmad">More Projects on Github</a>
+        </div>
+
+        <!-- Copyright -->
+        <div class="copyright">
+            <p>© 2025 • FERI AHMAD — All rights reserved.</p>
+        </div>
     </div>
 
-    <footer style="text-align: center; padding: 2rem; color: #666666; font-size: 0.875rem;">
-        <p>© 2025 • FERI AHMAD — All rights reserved.</p>
-    </footer>
-
     <script>
-        // Theme toggle functionality
         function toggleTheme() {
             const body = document.body;
-            const sunIcon = document.getElementById('sun-icon');
-            const moonIcon = document.getElementById('moon-icon');
+            const themeToggle = document.querySelector('.theme-toggle');
             
             if (body.classList.contains('dark')) {
                 body.classList.remove('dark');
                 body.classList.add('light');
-                sunIcon.style.display = 'block';
-                moonIcon.style.display = 'none';
+                themeToggle.textContent = '☀️';
                 localStorage.setItem('theme', 'light');
             } else {
                 body.classList.remove('light');
                 body.classList.add('dark');
-                sunIcon.style.display = 'none';
-                moonIcon.style.display = 'block';
+                themeToggle.textContent = '🌙';
                 localStorage.setItem('theme', 'dark');
             }
         }
 
         // Load saved theme on page load
         document.addEventListener('DOMContentLoaded', function() {
-            const savedTheme = localStorage.getItem('theme') || 'dark';
+            const savedTheme = localStorage.getItem('theme');
             const body = document.body;
-            const sunIcon = document.getElementById('sun-icon');
-            const moonIcon = document.getElementById('moon-icon');
+            const themeToggle = document.querySelector('.theme-toggle');
             
             if (savedTheme === 'light') {
                 body.classList.remove('dark');
                 body.classList.add('light');
-                sunIcon.style.display = 'block';
-                moonIcon.style.display = 'none';
+                themeToggle.textContent = '☀️';
             } else {
                 body.classList.remove('light');
                 body.classList.add('dark');
-                sunIcon.style.display = 'none';
-                moonIcon.style.display = 'block';
+                themeToggle.textContent = '🌙';
             }
         });
     </script>

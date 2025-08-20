@@ -1,0 +1,747 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Provisioning VM Instance GCP with Terraform &amp; Atlantis</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+	margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(50, 48, 44, 1);
+}
+.highlight-gray {
+	color: rgba(115, 114, 110, 1);
+	fill: rgba(115, 114, 110, 1);
+}
+.highlight-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.highlight-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.highlight-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.highlight-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.highlight-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(205, 60, 58, 1);
+	fill: rgba(205, 60, 58, 1);
+}
+.highlight-default_background {
+	color: rgba(50, 48, 44, 1);
+}
+.highlight-gray_background {
+	background: rgba(248, 248, 247, 1);
+}
+.highlight-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.highlight-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.highlight-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.highlight-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.highlight-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.highlight-purple_background {
+	background: rgba(248, 243, 252, 1);
+}
+.highlight-pink_background {
+	background: rgba(252, 241, 246, 1);
+}
+.highlight-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(115, 114, 110, 1);
+	fill: rgba(115, 114, 110, 1);
+}
+.block-color-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.block-color-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.block-color-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.block-color-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.block-color-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(205, 60, 58, 1);
+	fill: rgba(205, 60, 58, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(248, 248, 247, 1);
+}
+.block-color-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.block-color-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.block-color-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.block-color-purple_background {
+	background: rgba(248, 243, 252, 1);
+}
+.block-color-pink_background {
+	background: rgba(252, 241, 246, 1);
+}
+.block-color-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.select-value-color-default { background-color: rgba(84, 72, 49, 0.08); }
+.select-value-color-gray { background-color: rgba(84, 72, 49, 0.15); }
+.select-value-color-brown { background-color: rgba(210, 162, 141, 0.35); }
+.select-value-color-orange { background-color: rgba(224, 124, 57, 0.27); }
+.select-value-color-yellow { background-color: rgba(236, 191, 66, 0.39); }
+.select-value-color-green { background-color: rgba(123, 183, 129, 0.27); }
+.select-value-color-blue { background-color: rgba(93, 165, 206, 0.27); }
+.select-value-color-purple { background-color: rgba(168, 129, 197, 0.27); }
+.select-value-color-pink { background-color: rgba(225, 136, 179, 0.27); }
+.select-value-color-red { background-color: rgba(244, 171, 159, 0.4); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="255c8354-9586-803d-9a92-dd42266fc696" class="page sans"><header><img class="page-cover-image" src="Provisioning%20VM%20Instance%20GCP%20with%20Terraform%20&amp;%20Atla%20255c83549586803d9a92dd42266fc696/Screenshot_2025-08-20_at_10.22.18.png" style="object-position:center 50%"/><h1 class="page-title">Provisioning VM Instance GCP with Terraform &amp; Atlantis</h1><p class="page-description"></p><table class="properties"><tbody><tr class="property-row property-row-created_time"><th><span class="icon property-icon"><div data-testid="/icons/clock_gray.svg" style="width:14px;height:14px;flex-shrink:0;transform:scale(1.2);mask:url(/icons/clock_gray.svg?mode=light) no-repeat center;-webkit-mask:url(/icons/clock_gray.svg?mode=light) no-repeat center;background-color:rgba(71, 70, 68, 0.6);fill:rgba(71, 70, 68, 0.6)"></div></span>Created</th><td><time>@August 20, 2025 10:19 AM</time></td></tr><tr class="property-row property-row-multi_select"><th><span class="icon property-icon"><div data-testid="/icons/list_gray.svg" style="width:14px;height:14px;flex-shrink:0;transform:scale(1.2);mask:url(/icons/list_gray.svg?mode=light) no-repeat center;-webkit-mask:url(/icons/list_gray.svg?mode=light) no-repeat center;background-color:rgba(71, 70, 68, 0.6);fill:rgba(71, 70, 68, 0.6)"></div></span>Tags</th><td><span class="selected-value select-value-color-pink">Atlantis</span><span class="selected-value select-value-color-orange">GCP</span><span class="selected-value select-value-color-default">IaaS</span><span class="selected-value select-value-color-brown">Terraform</span><span class="selected-value select-value-color-orange">VM</span></td></tr><tr class="property-row property-row-text"><th><span class="icon property-icon"><div data-testid="/icons/description_gray.svg" style="width:14px;height:14px;flex-shrink:0;transform:scale(1.2);mask:url(/icons/description_gray.svg?mode=light) no-repeat center;-webkit-mask:url(/icons/description_gray.svg?mode=light) no-repeat center;background-color:rgba(71, 70, 68, 0.6);fill:rgba(71, 70, 68, 0.6)"></div></span>Description</th><td>Implemented Infrastructure as Code (IaC) by provisioning VM instances in Google Cloud Platform (GCP) using Terraform, integrated with Atlantis for automated plan and apply workflows. This setup enabled consistent, auditable, and collaborative infrastructure management through GitOps practices.</td></tr><tr class="property-row property-row-url"><th><span class="icon property-icon"><div data-testid="/icons/link_gray.svg" style="width:14px;height:14px;flex-shrink:0;transform:scale(1.2);mask:url(/icons/link_gray.svg?mode=light) no-repeat center;-webkit-mask:url(/icons/link_gray.svg?mode=light) no-repeat center;background-color:rgba(71, 70, 68, 0.6);fill:rgba(71, 70, 68, 0.6)"></div></span>Project URL</th><td><a href="https://github.com/feriahmad/terraform-gcp-vm-instance" class="url-value">https://github.com/feriahmad/terraform-gcp-vm-instance</a></td></tr></tbody></table></header><div class="page-body"><h1 id="255c8354-9586-8003-85ce-f6461733fd2c" class="">Terraform GCP VM Instance Configuration</h1><p id="255c8354-9586-8067-8e94-d7f86f7271f4" class="">This Terraform configuration creates a setup of 3 VM instances in Google Cloud Platform (GCP) with the following specifications:</p><ul id="255c8354-9586-8052-9d79-ecd13f9b48c5" class="bulleted-list"><li style="list-style-type:disc">Project ID: polished-tube-312806</li></ul><ul id="255c8354-9586-803e-9932-ff35143bb881" class="bulleted-list"><li style="list-style-type:disc">Region: us-central1</li></ul><ul id="255c8354-9586-8043-9c65-c92f2cb12357" class="bulleted-list"><li style="list-style-type:disc">3 VM instances with e2-small specification</li></ul><ul id="255c8354-9586-8013-8ef5-eae4a0b71df3" class="bulleted-list"><li style="list-style-type:disc">1 VPC network with a subnet</li></ul><ul id="255c8354-9586-803b-be3f-e974f24a32e5" class="bulleted-list"><li style="list-style-type:disc">1 VM with static public IP, the other 2 with only internal connectivity</li></ul><ul id="255c8354-9586-8047-9aa8-db7db5850cf9" class="bulleted-list"><li style="list-style-type:disc">All VMs accessible via SSH public key authentication</li></ul><ul id="255c8354-9586-80cb-b3c5-cde10eb195fb" class="bulleted-list"><li style="list-style-type:disc">The VM with public IP allows access on ports 22 (SSH), 80 (HTTP), and 443 (HTTPS)</li></ul><h2 id="255c8354-9586-8022-ae06-f28c87ed70d2" class="">Architecture</h2><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="255c8354-9586-80fc-990f-de3602ae9919" class="code code-wrap"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all">                                  +-------------------+
+                                  |                   |
+                                  |  Internet         |
+                                  |                   |
+                                  +--------+----------+
+                                           |
+                                           | Public IP
+                                           |
+                                  +--------v----------+
+                                  |                   |
+                                  |  public-vm        |
+                                  |  (e2-small)       |
+                                  |                   |
+                                  +--------+----------+
+                                           |
+                                           | Internal Network (10.0.0.0/24)
+                                           |
+                     +--------------------+v+--------------------+
+                     |                                           |
+        +------------v-----------+              +---------------v------------+
+        |                        |              |                            |
+        |  private-vm-1          |              |  private-vm-2              |
+        |  (e2-small)            |              |  (e2-small)                |
+        |                        |              |                            |
+        +------------------------+              +----------------------------+
+</code></pre><h2 id="255c8354-9586-806a-a072-dd6b23d46bdd" class="">Prerequisites</h2><ol type="1" id="255c8354-9586-80f9-9573-dd888b75612a" class="numbered-list" start="1"><li>Google Cloud Platform account with billing enabled</li></ol><ol type="1" id="255c8354-9586-808d-9861-f23dc8c66b87" class="numbered-list" start="2"><li>Google Cloud SDK installed and configured</li></ol><ol type="1" id="255c8354-9586-80cf-a2d5-f1a9ec0b9753" class="numbered-list" start="3"><li>Terraform installed (version 0.12+)</li></ol><ol type="1" id="255c8354-9586-80a1-bf24-cc4b1db8e009" class="numbered-list" start="4"><li>SSH key pair generated (if not already available)</li></ol><h2 id="255c8354-9586-80c2-a769-e1a21e843056" class="">Setup</h2><ol type="1" id="255c8354-9586-803b-995c-f198c152b367" class="numbered-list" start="1"><li>Clone this repository or copy the Terraform files to your local machine.</li></ol><ol type="1" id="255c8354-9586-80fc-b04f-fc0f9c66eaf8" class="numbered-list" start="2"><li>Authenticate with Google Cloud and set the correct project:<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="255c8354-9586-80c9-8dcf-cf87233a6c87" class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all"># Login to Google Cloud
+gcloud auth login
+
+# Set the project
+gcloud config set project polished-tube-312806
+
+# Create application default credentials for Terraform
+gcloud auth application-default login
+</code></pre></li></ol><ol type="1" id="255c8354-9586-808f-9a3b-d323a3b11181" class="numbered-list" start="3"><li>Update the <code>terraform.tfvars</code> file with your specific values if needed.</li></ol><ol type="1" id="255c8354-9586-80b8-95b2-d682e5baa1e4" class="numbered-list" start="4"><li>Make sure your SSH public key is available at the path specified in <code>terraform.tfvars</code> (default: <code>~/.ssh/id_rsa.pub</code>).</li></ol><h2 id="255c8354-9586-809a-a859-e0235e224a50" class="">Usage</h2><h3 id="255c8354-9586-8042-8ced-e298a6831ba6" class="">Initialize Terraform</h3><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="255c8354-9586-80f8-bea6-fded992854bb" class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all">terraform init
+</code></pre><h3 id="255c8354-9586-80d5-886a-c35be3b93d6e" class="">Preview the changes</h3><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="255c8354-9586-808d-b886-cae5b6ff3629" class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all">terraform plan
+</code></pre><h3 id="255c8354-9586-8010-9e7b-e3254a9f3059" class="">Apply the configuration</h3><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="255c8354-9586-80bb-a38f-ca6692d3bea7" class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all">terraform apply
+</code></pre><p id="255c8354-9586-80e3-844e-fa81e6204d68" class="">When prompted, type <code>yes</code> to confirm the creation of resources.</p><h3 id="255c8354-9586-80de-857b-f0a8bdcd08b2" class="">Access the VMs</h3><p id="255c8354-9586-8050-a46d-d52bb697d709" class="">After the resources are created, Terraform will output the IP addresses of the VMs.</p><p id="255c8354-9586-804f-a028-f6dbfdac8cb0" class="">To access the public VM:</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="255c8354-9586-8037-bce8-e4a333567833" class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all">ssh admin@&lt;public_vm_external_ip&gt;
+</code></pre><p id="255c8354-9586-8020-83b0-e66531e6881e" class="">To access the private VMs, you need to SSH to the public VM first, then SSH to the private VMs using their internal IPs:</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="255c8354-9586-803e-bc1c-c8a9f1c196e2" class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all"># From the public VM
+ssh admin@&lt;private_vm_internal_ip&gt;
+</code></pre><h3 id="255c8354-9586-809e-aded-cc2f2c2a1547" class="">Clean up</h3><p id="255c8354-9586-8023-86cc-c92935d66691" class="">To destroy all resources created by Terraform:</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="255c8354-9586-8011-8f41-c8307ae99260" class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all">terraform destroy
+</code></pre><p id="255c8354-9586-8062-917e-eb3b506ee66a" class="">When prompted, type <code>yes</code> to confirm the deletion of resources.</p><h2 id="255c8354-9586-80ea-9653-ff7ead5472a5" class="">CI/CD with Terraform and Atlantis</h2><p id="255c8354-9586-8045-a3e2-d9ddacc791cb" class="">This repository is configured with a GitHub Actions workflow that integrates Terraform with Atlantis-style commands. This setup automates Terraform plan and apply operations in response to pull requests and comments.</p><h3 id="255c8354-9586-80e7-8881-e97928b3fd40" class="">How it works</h3><ol type="1" id="255c8354-9586-806e-a284-c26a1ec2c8fb" class="numbered-list" start="1"><li>When you create a pull request that modifies Terraform files (*.tf, *.tfvars), the workflow automatically runs <code>terraform plan</code> and posts the results as a comment on the PR.</li></ol><ol type="1" id="255c8354-9586-8009-b774-c96718ce0d77" class="numbered-list" start="2"><li>To apply the changes, comment on the PR with:<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="255c8354-9586-8010-bcc3-d24afd325d43" class="code code-wrap"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all">atlantis apply
+</code></pre></li></ol><ol type="1" id="255c8354-9586-8031-819d-ff1a6ad25efe" class="numbered-list" start="3"><li>To generate a new plan, comment on the PR with:<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="255c8354-9586-8042-a2ca-c443eba6b752" class="code code-wrap"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all">atlantis plan
+</code></pre></li></ol><ol type="1" id="255c8354-9586-800d-951c-dcd6c754b558" class="numbered-list" start="4"><li>The workflow will process these commands and execute the corresponding Terraform operations.</li></ol><ol type="1" id="255c8354-9586-80ae-a544-d6738bb7581b" class="numbered-list" start="5"><li>After processing the command, the workflow will post a comment with the results, including the full output of the Terraform command.</li></ol><p id="255c8354-9586-8019-a016-d4f089b64ec3" class="">The GitHub Actions workflow is configured to respond to comments containing &quot;atlantis&quot; commands, providing a similar experience to the actual Atlantis server but without requiring a separate server deployment.</p><h3 id="255c8354-9586-80f9-bd0c-c79c6b325a2a" class="">Infracost Integration</h3><p id="255c8354-9586-806a-9752-e79ae27c14d5" class="">Cost estimates for infrastructure changes are provided by the Infracost GitHub app integration. This integration automatically adds cost estimates to pull requests, helping you understand the financial impact of your Terraform modifications before applying them.</p><p id="255c8354-9586-80a0-bfde-e7768c4e3849" class="">The provider configuration in <code>main.tf</code> has been set up with an alias, and all resources explicitly use this provider to ensure compatibility with various tools:</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="255c8354-9586-80d6-bd64-cb4638753989" class="code code-wrap"><code class="language-HCL" style="white-space:pre-wrap;word-break:break-all"># Configure the Google Cloud provider with an alias
+provider &quot;google&quot; {
+  project = var.project_id
+  region  = var.region
+  zone    = var.zone
+  alias   = &quot;main&quot;
+}
+
+# Example resource using the aliased provider
+resource &quot;google_compute_network&quot; &quot;vpc_network&quot; {
+  provider                = google.main
+  name                    = &quot;terraform-network&quot;
+  auto_create_subnetworks = false
+}
+</code></pre><h3 id="255c8354-9586-8079-bba7-d6cabd629e28" class="">GitHub Secrets Required</h3><p id="255c8354-9586-8043-bab0-d8a08b68908d" class="">For the GitHub Actions workflow to function properly, you need to set up the following secrets in your GitHub repository:</p><ul id="255c8354-9586-8056-a29e-e48fe2f2a72d" class="bulleted-list"><li style="list-style-type:disc"><code>GCP_SA_KEY</code>: The JSON key of a GCP service account with appropriate permissions for the resources in your Terraform configuration.</li></ul><ul id="255c8354-9586-8000-bb03-d46c1d0fefab" class="bulleted-list"><li style="list-style-type:disc"><code>SSH_PUBLIC_KEY</code> (optional): Your SSH public key for VM access. If not provided, a dummy key will be used in CI/CD environments.</li></ul><p id="255c8354-9586-806d-adf7-ced4cabef1f0" class="">You can use the provided <code>setup-github-secrets.sh</code> script to help you create a GCP service account and set up the required GitHub secrets:</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="255c8354-9586-8051-ba70-c0420cef946f" class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all"># Make the script executable
+chmod +x setup-github-secrets.sh
+
+# Run the script
+./setup-github-secrets.sh
+</code></pre><p id="255c8354-9586-80c8-bb94-d0e5a057c4b7" class="">The script will guide you through the process of:</p><ol type="1" id="255c8354-9586-8025-adcd-cee265d8c3f9" class="numbered-list" start="1"><li>Creating a GCP service account with the necessary permissions</li></ol><ol type="1" id="255c8354-9586-80e5-b7ad-d70a4685d581" class="numbered-list" start="2"><li>Generating a service account key</li></ol><ol type="1" id="255c8354-9586-808e-bac4-e1911430ae18" class="numbered-list" start="3"><li>Setting up the GitHub secret (if GitHub CLI is installed) or providing instructions for manual setup</li></ol><p id="255c8354-9586-8083-b10f-cf8d67b394be" class="">Note: The generated <code>gcp-sa-key.json</code> file is automatically added to <code>.gitignore</code> to prevent accidentally committing sensitive credentials to your repository. Always ensure this file is not pushed to version control.</p><h3 id="255c8354-9586-8080-ad37-e863a1adec2a" class="">Local Atlantis Setup (Optional)</h3><p id="255c8354-9586-8054-a9db-e84b49538644" class="">If you want to run Atlantis locally for testing:</p><ol type="1" id="255c8354-9586-8040-a369-d5d420c351bc" class="numbered-list" start="1"><li>Install Atlantis: <a href="https://www.runatlantis.io/docs/installation.html">https://www.runatlantis.io/docs/installation.html</a></li></ol><ol type="1" id="255c8354-9586-80b6-90e2-eaed8981cd0f" class="numbered-list" start="2"><li>Run Atlantis with:<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="255c8354-9586-8010-af2f-ddaed09479a1" class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all">atlantis server \\
+  --repo-allowlist=&quot;github.com/your-username/terraform-gcp-vm-instance&quot; \\
+  --gh-user=&quot;your-github-username&quot; \\
+  --gh-token=&quot;your-github-token&quot; \\
+  --gh-webhook-secret=&quot;your-webhook-secret&quot;
+</code></pre></li></ol><ol type="1" id="255c8354-9586-80a6-bdfb-e3af1816fadf" class="numbered-list" start="3"><li>Set up a webhook in your GitHub repository pointing to your Atlantis server.</li></ol><h2 id="255c8354-9586-8081-b4f9-d38614285cca" class="">Files</h2><ul id="255c8354-9586-80e0-851c-d33c04ffd83f" class="bulleted-list"><li style="list-style-type:disc"><code>main.tf</code>: Main Terraform configuration file</li></ul><ul id="255c8354-9586-80c8-a26b-d0c37dde2c7c" class="bulleted-list"><li style="list-style-type:disc"><code>variables.tf</code>: Variable definitions</li></ul><ul id="255c8354-9586-8094-b761-c8330d37e672" class="bulleted-list"><li style="list-style-type:disc"><code>outputs.tf</code>: Output definitions</li></ul><ul id="255c8354-9586-8056-b52d-f4ce25ad20a2" class="bulleted-list"><li style="list-style-type:disc"><code>terraform.tfvars</code>: Variable values</li></ul><ul id="255c8354-9586-8029-ae99-dbc948f09e3f" class="bulleted-list"><li style="list-style-type:disc"><code>atlantis.yaml</code>: Atlantis configuration file</li></ul><ul id="255c8354-9586-80a5-987f-ca26cd6596d4" class="bulleted-list"><li style="list-style-type:disc"><code>.github/workflows/atlantis.yml</code>: GitHub Actions workflow for Terraform with Atlantis-style commands</li></ul><ul id="255c8354-9586-8038-beab-e8d7e01cfc2f" class="bulleted-list"><li style="list-style-type:disc"><code>setup-github-secrets.sh</code>: Helper script to set up GitHub secrets for CI/CD</li></ul><h2 id="255c8354-9586-8063-bdaa-da4398e4bc8a" class="">Notes</h2><ul id="255c8354-9586-80be-95c8-f3673b95aa44" class="bulleted-list"><li style="list-style-type:disc">The default SSH username is set to <code>admin</code> and can be changed in the <code>terraform.tfvars</code> file.</li></ul><ul id="255c8354-9586-803b-b639-e1e46a961384" class="bulleted-list"><li style="list-style-type:disc">SSH key configuration:<ul id="255c8354-9586-8049-b28d-f6357ac3cfe2" class="bulleted-list"><li style="list-style-type:circle">For local development: The default SSH public key path is set to <code>~/.ssh/id_rsa.pub</code> and can be changed in the <code>terraform.tfvars</code> file.</li></ul><ul id="255c8354-9586-80da-b3e7-dc091bb22b25" class="bulleted-list"><li style="list-style-type:circle">For CI/CD: A dummy SSH key is automatically set in the GitHub Actions workflow. In production, you should set a real SSH key using a secure method.</li></ul></li></ul><ul id="255c8354-9586-80f0-80c8-faaa9d68945a" class="bulleted-list"><li style="list-style-type:disc">The firewall rules allow SSH, HTTP, and HTTPS access to the public VM from any IP address.</li></ul><ul id="255c8354-9586-806b-883b-d6ce8388fbde" class="bulleted-list"><li style="list-style-type:disc">Internal communication between VMs is allowed on all ports.</li></ul><ul id="255c8354-9586-8061-bcd2-e8707fcb1775" class="bulleted-list"><li style="list-style-type:disc">The Google Cloud credentials:<ul id="255c8354-9586-8047-88ee-f011553ba62a" class="bulleted-list"><li style="list-style-type:circle">For local development: Use <code>gcloud auth application-default login</code> to create credentials.</li></ul><ul id="255c8354-9586-8044-bd65-f90a4271db89" class="bulleted-list"><li style="list-style-type:circle">For CI/CD: Credentials are provided through the <code>GCP_SA_KEY</code> secret and the <code>GOOGLE_APPLICATION_CREDENTIALS</code> environment variable.</li></ul></li></ul><p id="255c8354-9586-8066-aed0-f14acd20d81a" class="">
+</p><p id="255c8354-9586-8048-a87f-db7c477644da" class="">Github Repo: <a href="https://github.com/feriahmad/terraform-gcp-vm-instance">https://github.com/feriahmad/terraform-gcp-vm-instance</a></p></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>

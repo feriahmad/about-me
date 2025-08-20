@@ -1,0 +1,710 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Proisioning MongoDB with Ansible (Install, Backup, Restore &amp; Hardening)</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+	margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(50, 48, 44, 1);
+}
+.highlight-gray {
+	color: rgba(115, 114, 110, 1);
+	fill: rgba(115, 114, 110, 1);
+}
+.highlight-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.highlight-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.highlight-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.highlight-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.highlight-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(205, 60, 58, 1);
+	fill: rgba(205, 60, 58, 1);
+}
+.highlight-default_background {
+	color: rgba(50, 48, 44, 1);
+}
+.highlight-gray_background {
+	background: rgba(248, 248, 247, 1);
+}
+.highlight-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.highlight-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.highlight-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.highlight-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.highlight-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.highlight-purple_background {
+	background: rgba(248, 243, 252, 1);
+}
+.highlight-pink_background {
+	background: rgba(252, 241, 246, 1);
+}
+.highlight-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(115, 114, 110, 1);
+	fill: rgba(115, 114, 110, 1);
+}
+.block-color-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.block-color-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.block-color-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.block-color-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.block-color-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(205, 60, 58, 1);
+	fill: rgba(205, 60, 58, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(248, 248, 247, 1);
+}
+.block-color-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.block-color-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.block-color-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.block-color-purple_background {
+	background: rgba(248, 243, 252, 1);
+}
+.block-color-pink_background {
+	background: rgba(252, 241, 246, 1);
+}
+.block-color-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.select-value-color-default { background-color: rgba(84, 72, 49, 0.08); }
+.select-value-color-gray { background-color: rgba(84, 72, 49, 0.15); }
+.select-value-color-brown { background-color: rgba(210, 162, 141, 0.35); }
+.select-value-color-orange { background-color: rgba(224, 124, 57, 0.27); }
+.select-value-color-yellow { background-color: rgba(236, 191, 66, 0.39); }
+.select-value-color-green { background-color: rgba(123, 183, 129, 0.27); }
+.select-value-color-blue { background-color: rgba(93, 165, 206, 0.27); }
+.select-value-color-purple { background-color: rgba(168, 129, 197, 0.27); }
+.select-value-color-pink { background-color: rgba(225, 136, 179, 0.27); }
+.select-value-color-red { background-color: rgba(244, 171, 159, 0.4); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="255c8354-9586-80e4-acf0-c6453c0afec9" class="page sans"><header><img class="page-cover-image" src="Proisioning%20MongoDB%20with%20Ansible%20(Install,%20Backup,%20255c8354958680e4acf0c6453c0afec9/Screenshot_2025-08-20_at_10.35.27.png" style="object-position:center 50%"/><h1 class="page-title">Proisioning MongoDB with Ansible (Install, Backup, Restore &amp; Hardening)</h1><p class="page-description"></p><table class="properties"><tbody><tr class="property-row property-row-created_time"><th><span class="icon property-icon"><div data-testid="/icons/clock_gray.svg" style="width:14px;height:14px;flex-shrink:0;transform:scale(1.2);mask:url(/icons/clock_gray.svg?mode=light) no-repeat center;-webkit-mask:url(/icons/clock_gray.svg?mode=light) no-repeat center;background-color:rgba(71, 70, 68, 0.6);fill:rgba(71, 70, 68, 0.6)"></div></span>Created</th><td><time>@August 20, 2025 10:26 AM</time></td></tr><tr class="property-row property-row-multi_select"><th><span class="icon property-icon"><div data-testid="/icons/list_gray.svg" style="width:14px;height:14px;flex-shrink:0;transform:scale(1.2);mask:url(/icons/list_gray.svg?mode=light) no-repeat center;-webkit-mask:url(/icons/list_gray.svg?mode=light) no-repeat center;background-color:rgba(71, 70, 68, 0.6);fill:rgba(71, 70, 68, 0.6)"></div></span>Tags</th><td><span class="selected-value select-value-color-pink">Ansible</span><span class="selected-value select-value-color-default">MongoDB</span><span class="selected-value select-value-color-green">Ubuntu</span></td></tr><tr class="property-row property-row-text"><th><span class="icon property-icon"><div data-testid="/icons/description_gray.svg" style="width:14px;height:14px;flex-shrink:0;transform:scale(1.2);mask:url(/icons/description_gray.svg?mode=light) no-repeat center;-webkit-mask:url(/icons/description_gray.svg?mode=light) no-repeat center;background-color:rgba(71, 70, 68, 0.6);fill:rgba(71, 70, 68, 0.6)"></div></span>Description</th><td>Automated MongoDB provisioning and management using Ansible, covering installation, backup, restore, and security hardening. This project demonstrated Infrastructure as Code practices to ensure consistent deployments, reliable data recovery, and improved database security.</td></tr><tr class="property-row property-row-url"><th><span class="icon property-icon"><div data-testid="/icons/link_gray.svg" style="width:14px;height:14px;flex-shrink:0;transform:scale(1.2);mask:url(/icons/link_gray.svg?mode=light) no-repeat center;-webkit-mask:url(/icons/link_gray.svg?mode=light) no-repeat center;background-color:rgba(71, 70, 68, 0.6);fill:rgba(71, 70, 68, 0.6)"></div></span>Project URL</th><td><a href="https://github.com/feriahmad/mongodb-ansible" class="url-value">https://github.com/feriahmad/mongodb-ansible</a></td></tr></tbody></table></header><div class="page-body"><h1 id="255c8354-9586-809d-9dba-e00485d86d5e" class="">MongoDB 5.0.3 Installation Ansible Playbook</h1><p id="255c8354-9586-8085-8e83-efbd62a27b7c" class="">This Ansible playbook automates the installation of MongoDB 5.0.3 on Ubuntu 24.04, using the Ubuntu 22.04 (Jammy Jellyfish) repository for compatibility.</p><h2 id="255c8354-9586-80ec-8412-df2958e8c725" class="">Prerequisites</h2><ul id="255c8354-9586-80e8-8fc6-d1a904f6b6e7" class="bulleted-list"><li style="list-style-type:disc">Ubuntu 24.04 target system</li></ul><ul id="255c8354-9586-804d-902b-d8bfb957a19b" class="bulleted-list"><li style="list-style-type:disc">Ansible installed on the control machine</li></ul><ul id="255c8354-9586-80eb-a750-fdfe9b21f80a" class="bulleted-list"><li style="list-style-type:disc">Sudo privileges on the target system</li></ul><h2 id="255c8354-9586-807e-b759-dc0b8380af28" class="">Project Structure</h2><ul id="255c8354-9586-80a6-879f-e0b8755c886e" class="bulleted-list"><li style="list-style-type:disc"><code>inventory.ini</code>: Contains the target hosts (localhost in this case)</li></ul><ul id="255c8354-9586-8017-82b5-e73b7d372809" class="bulleted-list"><li style="list-style-type:disc"><code>mongodb_install.yml</code>: The main playbook that installs MongoDB 5.0.3</li></ul><ul id="255c8354-9586-80a8-bd04-cd9f17e1c925" class="bulleted-list"><li style="list-style-type:disc"><code>mongodb_test.yml</code>: A playbook to test the MongoDB installation</li></ul><ul id="255c8354-9586-80cb-b8c1-fac49e1301c4" class="bulleted-list"><li style="list-style-type:disc"><code>vars/mongodb_vars.yml</code>: Contains configurable variables for MongoDB installation</li></ul><ul id="255c8354-9586-8034-abcc-e2508c73d2f1" class="bulleted-list"><li style="list-style-type:disc"><code>templates/mongod.conf.j2</code>: Template for MongoDB configuration file</li></ul><ul id="255c8354-9586-80b9-a231-f7b0c999f75b" class="bulleted-list"><li style="list-style-type:disc"><code>.env.template</code>: Template for environment variables (copy to .env and customize)</li></ul><ul id="255c8354-9586-800e-b7bc-fdb47675cae4" class="bulleted-list"><li style="list-style-type:disc"><code>load_env.sh</code>: Script to load environment variables from .env file</li></ul><ul id="255c8354-9586-80be-ab62-e8f7be2864cd" class="bulleted-list"><li style="list-style-type:disc">Various utility scripts for managing MongoDB (see <a href="Proisioning%20MongoDB%20with%20Ansible%20(Install,%20Backup,%20255c8354958680e4acf0c6453c0afec9.html">Utility Scripts Summary</a>)</li></ul><h2 id="255c8354-9586-809b-97ca-c4b3b5f303bc" class="">Usage</h2><h3 id="255c8354-9586-803b-af2d-e123b701b415" class="">Using the Installation Script</h3><p id="255c8354-9586-80bc-8c12-d30eaad0d19d" class="">The easiest way to install MongoDB is to use the provided installation script:</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="255c8354-9586-80a7-8dae-e6cec9ae9f92" class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all">./install_mongodb.sh
+</code></pre><p id="255c8354-9586-803e-863e-c024a4b94986" class="">This script will:</p><ol type="1" id="255c8354-9586-80cc-b567-c90afdaaaad4" class="numbered-list" start="1"><li>Check if Ansible is installed and install it if necessary</li></ol><ol type="1" id="255c8354-9586-8055-876b-f911ab6f578e" class="numbered-list" start="2"><li>Run the MongoDB installation playbook</li></ol><ol type="1" id="255c8354-9586-80eb-835f-d32931f9acb4" class="numbered-list" start="3"><li>Provide instructions for verifying the installation</li></ol><h3 id="255c8354-9586-8052-9a2d-fe7bce37e74c" class="">Manual Installation</h3><p id="255c8354-9586-806b-964b-c1dbbde52082" class="">Alternatively, you can run the playbook directly:</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="255c8354-9586-8000-bab3-cf5cedc463e0" class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all">ansible-playbook -i inventory.ini mongodb_install.yml
+</code></pre><p id="255c8354-9586-80a5-8cf9-fe7b8a2ad74f" class="">To customize the MongoDB installation, modify the variables in <code>vars/mongodb_vars.yml</code> before running the playbook.</p><h2 id="255c8354-9586-80b6-9af3-db9cb60663a3" class="">What the Playbook Does</h2><ol type="1" id="255c8354-9586-80d3-bd23-f7d65058a4b1" class="numbered-list" start="1"><li>Adds the MongoDB GPG key</li></ol><ol type="1" id="255c8354-9586-80c6-a3eb-cb8e89f6eb49" class="numbered-list" start="2"><li>Adds the MongoDB 5.0 repository</li></ol><ol type="1" id="255c8354-9586-8026-8ad7-f128715a2877" class="numbered-list" start="3"><li>Updates apt cache</li></ol><ol type="1" id="255c8354-9586-80c0-b928-d0f58547f44d" class="numbered-list" start="4"><li>Installs libssl1.1 dependency (required for MongoDB 5.0.x on Ubuntu 24.04)</li></ol><ol type="1" id="255c8354-9586-8004-85b5-ece63c5159d7" class="numbered-list" start="5"><li>Installs MongoDB 5.0.3 packages</li></ol><ol type="1" id="255c8354-9586-8027-826d-fd68d2bbd887" class="numbered-list" start="6"><li>Creates necessary directories for MongoDB data and logs</li></ol><ol type="1" id="255c8354-9586-803d-ae4c-d2f588ed0acd" class="numbered-list" start="7"><li>Pins the MongoDB version to prevent accidental upgrades</li></ol><ol type="1" id="255c8354-9586-8028-8db3-f2ff1f053b52" class="numbered-list" start="8"><li>Configures MongoDB using the template</li></ol><ol type="1" id="255c8354-9586-80ae-a6cf-f895141046b7" class="numbered-list" start="9"><li>Enables and starts the MongoDB service</li></ol><ol type="1" id="255c8354-9586-803c-a2ef-fe957666a80c" class="numbered-list" start="10"><li>Verifies the MongoDB installation by checking the version</li></ol><blockquote id="255c8354-9586-8009-9e1e-e318383df98a" class="">Note: The order of tasks is important. The MongoDB packages must be installed before creating the data and log directories with the mongodb user as owner, since the mongodb user is created during package installation.<p id="255c8354-9586-80aa-84c7-cf13fb80e321" class=""><strong>Important</strong>: This playbook includes a custom systemd service file for MongoDB to ensure proper startup. The configuration also sets <code>fork: false</code> in the MongoDB configuration file, which is required for proper operation with systemd.</p></blockquote><h2 id="255c8354-9586-80b3-9d9c-f0201f3712bb" class="">Verification</h2><h3 id="255c8354-9586-80d8-b7cd-f3df5508f813" class="">Using the Status Script</h3><p id="255c8354-9586-80b5-96fe-f8ba3c3904d0" class="">The easiest way to check the status of your MongoDB installation is to use the provided status script:</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="255c8354-9586-8002-83e3-d1ff9fd69a69" class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all">./mongodb_status.sh
+</code></pre><p id="255c8354-9586-8017-9f92-db9909761d89" class="">This script will provide a comprehensive overview of your MongoDB installation, including:</p><ul id="255c8354-9586-8065-a99d-c8b706a84cdd" class="bulleted-list"><li style="list-style-type:disc">Installation status and version</li></ul><ul id="255c8354-9586-8074-ba20-ede41f0589df" class="bulleted-list"><li style="list-style-type:disc">Service status (running or stopped)</li></ul><ul id="255c8354-9586-80dc-9d21-cc1efc2f6627" class="bulleted-list"><li style="list-style-type:disc">Configuration details (port, bind IP, data directory, etc.)</li></ul><ul id="255c8354-9586-8091-965d-f0a67ffe825d" class="bulleted-list"><li style="list-style-type:disc">Server status information</li></ul><ul id="255c8354-9586-8088-96d9-cd07acca026c" class="bulleted-list"><li style="list-style-type:disc">List of databases</li></ul><ul id="255c8354-9586-80f7-b1f3-d6be5cf15748" class="bulleted-list"><li style="list-style-type:disc">Connection information</li></ul><h3 id="255c8354-9586-808d-bbeb-c689777be64b" class="">Manual Verification</h3><p id="255c8354-9586-8078-97e5-e05d3382e975" class="">You can also verify manually by:</p><ol type="1" id="255c8354-9586-80ca-8a71-c3968b47a4d3" class="numbered-list" start="1"><li>Checking the service status:<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="255c8354-9586-8046-ab30-ee12b7d17ab0" class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all">systemctl status mongod
+</code></pre></li></ol><ol type="1" id="255c8354-9586-808f-9b0e-e972e110265d" class="numbered-list" start="2"><li>Connecting to MongoDB:<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="255c8354-9586-808f-9012-e5da4106816f" class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all">mongosh
+</code></pre></li></ol><ol type="1" id="255c8354-9586-809c-80c3-cd00b381ffef" class="numbered-list" start="3"><li>Checking the MongoDB version:<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="255c8354-9586-8002-a7dc-e466e2686fd5" class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all">mongod --version
+</code></pre></li></ol><h3 id="255c8354-9586-80c4-ad11-eb298fbab5c3" class="">Using the Test Script</h3><p id="255c8354-9586-803b-807f-d736a1d1df62" class="">To verify your MongoDB installation, you can use the provided test script:</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="255c8354-9586-805d-b703-f5fd99a5b89b" class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all">./test_mongodb.sh
+</code></pre><p id="255c8354-9586-803f-a2be-c248e86a2581" class="">This script will:</p><ol type="1" id="255c8354-9586-80fe-9710-e7fbbc5c1479" class="numbered-list" start="1"><li>Check if MongoDB is installed</li></ol><ol type="1" id="255c8354-9586-8064-8fb8-da4e174cb572" class="numbered-list" start="2"><li>Run the test playbook</li></ol><ol type="1" id="255c8354-9586-80a6-abb3-d7e8842443b6" class="numbered-list" start="3"><li>Report on the success or failure of the tests</li></ol><h3 id="255c8354-9586-8068-b1be-e080630a16e3" class="">Manual Testing</h3><p id="255c8354-9586-80b0-b958-faccd1207313" class="">Alternatively, you can run the test playbook directly:</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="255c8354-9586-80b6-8aa9-cd3fa4814f28" class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all">ansible-playbook -i inventory.ini mongodb_test.yml
+</code></pre><p id="255c8354-9586-8009-8a3f-d0bd3f30b3e5" class="">The test playbook will:</p><ul id="255c8354-9586-80c1-acb2-ed1ac9c2a7dd" class="bulleted-list"><li style="list-style-type:disc">Check if the MongoDB service is running</li></ul><ul id="255c8354-9586-8065-896f-c39b37a57f98" class="bulleted-list"><li style="list-style-type:disc">Verify the MongoDB version</li></ul><ul id="255c8354-9586-80d1-b715-f23e511b3222" class="bulleted-list"><li style="list-style-type:disc">Test the connection to MongoDB</li></ul><ul id="255c8354-9586-8024-8a0f-f77b651b5562" class="bulleted-list"><li style="list-style-type:disc">Create a test database and collection</li></ul><ul id="255c8354-9586-806b-a4bf-e2713e2f2a5c" class="bulleted-list"><li style="list-style-type:disc">Insert a test document and retrieve it</li></ul><h2 id="255c8354-9586-80c3-9bf6-d6911a83d0d6" class="">Configuration</h2><h3 id="255c8354-9586-8062-8f32-dc1ddba9c86c" class="">Ansible Variables</h3><p id="255c8354-9586-800d-8333-cf61beb90a89" class="">Basic configuration parameters can be modified in the <code>vars/mongodb_vars.yml</code> file:</p><ul id="255c8354-9586-80df-a63b-eaf41a15b389" class="bulleted-list"><li style="list-style-type:disc">MongoDB version: 5.0.3</li></ul><ul id="255c8354-9586-8000-aa50-d9a89856a68b" class="bulleted-list"><li style="list-style-type:disc">MongoDB port: 27017</li></ul><ul id="255c8354-9586-8098-9172-d11f16b21f55" class="bulleted-list"><li style="list-style-type:disc">Bind IP: 127.0.0.1 (localhost only)</li></ul><ul id="255c8354-9586-806c-8985-df07e4eee880" class="bulleted-list"><li style="list-style-type:disc">Data directory: /var/lib/mongodb</li></ul><ul id="255c8354-9586-80a1-b84f-ff8abc1e4966" class="bulleted-list"><li style="list-style-type:disc">Log directory: /var/log/mongodb</li></ul><ul id="255c8354-9586-8007-ba78-ff36090ad25f" class="bulleted-list"><li style="list-style-type:disc">Configuration file: /etc/mongod.conf</li></ul><h3 id="255c8354-9586-8098-9206-cb0f9bb0680a" class="">Environment Variables</h3><p id="255c8354-9586-8012-881a-e56f42ea5260" class="">For sensitive information like admin credentials, you can use environment variables. This project includes a <code>.env.template</code> file that you can copy to <code>.env</code> and customize:</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="255c8354-9586-80f7-832c-f56c7f3c1067" class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all">cp .env.template .env
+</code></pre><p id="255c8354-9586-8084-b88a-ffd22e125456" class="">Then edit the <code>.env</code> file to set your credentials:</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="255c8354-9586-80c2-aa74-d5b9cd28b6bc" class="code code-wrap"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all"># MongoDB Environment Variables
+MONGODB_ADMIN_USER=admin
+MONGODB_ADMIN_PASS=your_secure_password_here
+MONGODB_PORT=27017
+MONGODB_BIND_IP=127.0.0.1
+MONGODB_BACKUP_DIR=/tmp/mongodb_backups
+</code></pre><p id="255c8354-9586-8021-9b70-d41898d9dec7" class="">The <code>.env</code> file is loaded by the utility scripts to access these environment variables. This approach keeps sensitive information like passwords out of your repository, as the <code>.env</code> file is included in <code>.gitignore</code>.</p><p id="255c8354-9586-80dc-8bd4-cb6cb65bf056" class="">The following scripts use environment variables from the <code>.env</code> file:</p><ul id="255c8354-9586-8010-aa8a-ffc009c1ffaf" class="bulleted-list"><li style="list-style-type:disc"><code>secure_mongodb.sh</code>: Uses admin credentials for setting up authentication</li></ul><ul id="255c8354-9586-8067-9797-d0393334fc3c" class="bulleted-list"><li style="list-style-type:disc"><code>manage_users.sh</code>: Uses admin credentials for user management operations</li></ul><ul id="255c8354-9586-8075-92ef-c0e2607c7619" class="bulleted-list"><li style="list-style-type:disc"><code>monitor_mongodb.sh</code>: Uses admin credentials for monitoring (if authentication is enabled)</li></ul><ul id="255c8354-9586-807b-9b1e-f35a97d2ebf2" class="bulleted-list"><li style="list-style-type:disc"><code>backup_mongodb.sh</code>: Uses backup directory and admin credentials</li></ul><ul id="255c8354-9586-800c-80e6-edc4fe5388a7" class="bulleted-list"><li style="list-style-type:disc"><code>restore_mongodb.sh</code>: Uses admin credentials for restore operations (if authentication is enabled)</li></ul><h2 id="255c8354-9586-8080-b7a8-c463bfb07ca1" class="">Backing Up MongoDB</h2><p id="255c8354-9586-8048-bf85-c6b99d32289e" class="">To create backups of your MongoDB databases, you can use the provided backup script:</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="255c8354-9586-80b8-a97b-d285748b057e" class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all">./backup_mongodb.sh
+</code></pre><p id="255c8354-9586-8055-a2fa-e3150e5a814c" class="">By default, this script will back up all databases to <code>/tmp/mongodb_backups/[timestamp]</code>.</p><p id="255c8354-9586-806f-9173-c473843e08f6" class="">You can customize the backup with the following options:</p><ul id="255c8354-9586-804e-bf01-e697e264c075" class="bulleted-list"><li style="list-style-type:disc"><code>-dir PATH</code>: Specify a custom backup directory</li></ul><ul id="255c8354-9586-8032-86c4-dcf58412f82c" class="bulleted-list"><li style="list-style-type:disc"><code>-db NAME</code>: Backup only a specific database</li></ul><ul id="255c8354-9586-806e-84b1-c3d402dd011a" class="bulleted-list"><li style="list-style-type:disc"><code>-help</code>: Show usage information</li></ul><p id="255c8354-9586-80b8-864b-d7bf2d4604e0" class="">Example:</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="255c8354-9586-808e-8e19-f5832dc6747a" class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all">./backup_mongodb.sh --dir /home/user/mongodb_backups --db myapp
+</code></pre><p id="255c8354-9586-8071-8c64-e2683eb5c2ec" class="">The backup script will:</p><ol type="1" id="255c8354-9586-8002-95e9-fabb08285e5c" class="numbered-list" start="1"><li>Create a timestamped backup directory</li></ol><ol type="1" id="255c8354-9586-80ba-b297-ce537a1c4970" class="numbered-list" start="2"><li>Get a list of all databases (or use the specified database)</li></ol><ol type="1" id="255c8354-9586-803a-9d62-fa7e89734c91" class="numbered-list" start="3"><li>Use mongodump to create compressed backups</li></ol><ol type="1" id="255c8354-9586-8093-a0ff-cc77ea5262dc" class="numbered-list" start="4"><li>Create a backup info file with details about the backup</li></ol><h3 id="255c8354-9586-8036-8bf1-ee0c203499be" class="">Restoring from Backup</h3><p id="255c8354-9586-8058-b866-f5f03e91058e" class="">To restore MongoDB databases from a backup, you can use the provided restore script:</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="255c8354-9586-8028-ae74-e09a745e60e2" class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all">./restore_mongodb.sh --path /path/to/backup
+</code></pre><p id="255c8354-9586-8033-b6a8-e49ad36b9972" class="">The restore script supports the following options:</p><ul id="255c8354-9586-80a9-95e3-dc0f5bfebedc" class="bulleted-list"><li style="list-style-type:disc"><code>-path PATH</code>: Specify the backup directory path (required)</li></ul><ul id="255c8354-9586-804c-a70e-dd6779a7f993" class="bulleted-list"><li style="list-style-type:disc"><code>-db NAME</code>: Restore only a specific database</li></ul><ul id="255c8354-9586-80d4-95d1-d659e65d4f9f" class="bulleted-list"><li style="list-style-type:disc"><code>-drop</code>: Drop existing collections before restoring</li></ul><ul id="255c8354-9586-8056-aa80-dd13350147c5" class="bulleted-list"><li style="list-style-type:disc"><code>-help</code>: Show usage information</li></ul><p id="255c8354-9586-80e4-b709-fc19ee82e829" class="">Example:</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="255c8354-9586-8071-8b06-f0b57ca743e1" class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all">./restore_mongodb.sh --path /tmp/mongodb_backups/20250521_120000 --db myapp --drop
+</code></pre><p id="255c8354-9586-8084-b1f9-daab110176a0" class="">The restore script will:</p><ol type="1" id="255c8354-9586-805a-a68c-edb1c00295e0" class="numbered-list" start="1"><li>Verify the backup directory exists</li></ol><ol type="1" id="255c8354-9586-80cd-b05a-f464c119bb3b" class="numbered-list" start="2"><li>Display information about the backup</li></ol><ol type="1" id="255c8354-9586-8006-b4ba-faf18b062d5d" class="numbered-list" start="3"><li>Restore the databases using mongorestore</li></ol><ol type="1" id="255c8354-9586-806c-8d62-f71598311667" class="numbered-list" start="4"><li>Report on the success or failure of the restore operation</li></ol><h2 id="255c8354-9586-80dd-b28d-c1552e6055cc" class="">Updating MongoDB</h2><p id="255c8354-9586-806c-9db7-e330df3addda" class="">To update MongoDB to a newer version, you can use the provided update script:</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="255c8354-9586-809d-b706-e80a14a02537" class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all">./update_mongodb.sh
+</code></pre><p id="255c8354-9586-8091-a91c-f393a938a1e2" class="">This script will:</p><ol type="1" id="255c8354-9586-80c0-a06a-d2e1a6c0be61" class="numbered-list" start="1"><li>Show the current MongoDB version</li></ol><ol type="1" id="255c8354-9586-8007-88cd-e5a1b71c349c" class="numbered-list" start="2"><li>Ask for the new version you want to install</li></ol><ol type="1" id="255c8354-9586-80b7-a0bf-cccfff444885" class="numbered-list" start="3"><li>Update the configuration files</li></ol><ol type="1" id="255c8354-9586-8081-9931-f42fc864ae8c" class="numbered-list" start="4"><li>Run the installation playbook with the new version</li></ol><ol type="1" id="255c8354-9586-80cb-b1ad-d4704605f1e3" class="numbered-list" start="5"><li>Automatically revert changes if the update fails</li></ol><p id="255c8354-9586-80b3-9780-cda21d5dc1bf" class="">The script handles both minor version updates (e.g., 5.0.3 to 5.0.4) and major version updates (e.g., 5.0.3 to 6.0.0) by updating the repository information as needed.</p><h2 id="255c8354-9586-805a-8a47-e12b76b13e48" class="">Uninstallation</h2><p id="255c8354-9586-8066-acf0-c07a3e601c54" class="">If you need to remove MongoDB from your system, you can use the provided uninstall script:</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="255c8354-9586-80f0-b164-da7e6d675830" class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all">./uninstall_mongodb.sh
+</code></pre><p id="255c8354-9586-8098-90cd-c7e66e81f45f" class="">This script will:</p><ol type="1" id="255c8354-9586-80cb-88c4-fd0ff8ae34b5" class="numbered-list" start="1"><li>Ask for confirmation before proceeding</li></ol><ol type="1" id="255c8354-9586-8009-871a-e26156e586a3" class="numbered-list" start="2"><li>Stop the MongoDB service</li></ol><ol type="1" id="255c8354-9586-8048-aab4-cb47c3abe2e1" class="numbered-list" start="3"><li>Remove all MongoDB packages</li></ol><ol type="1" id="255c8354-9586-8005-91bc-f2a515f2934b" class="numbered-list" start="4"><li>Remove the MongoDB repository and GPG key</li></ol><ol type="1" id="255c8354-9586-809f-b974-f74a8bca646d" class="numbered-list" start="5"><li>Delete MongoDB data and log directories</li></ol><ol type="1" id="255c8354-9586-8051-9e5a-ff4d2f0f2900" class="numbered-list" start="6"><li>Clean up the system</li></ol><p id="255c8354-9586-80ba-b107-d7df36047d23" class=""><strong>Warning</strong>: This will completely remove MongoDB and all its data from your system. Make sure you have a backup of any important data before running this script.</p><h2 id="255c8354-9586-80e1-8f6f-f0710bee9608" class="">Securing MongoDB</h2><h3 id="255c8354-9586-80d1-9545-c1c2ec80497f" class="">Basic Security Configuration</h3><p id="255c8354-9586-8032-b5a7-f27e7282eee8" class="">To secure your MongoDB installation, you can use the provided security script:</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="255c8354-9586-80a0-8141-e578f840afca" class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all">./secure_mongodb.sh
+</code></pre><p id="255c8354-9586-80b5-9ab2-fd73014c0e22" class="">By default, this script will:</p><ol type="1" id="255c8354-9586-808e-8545-dc12641f1edb" class="numbered-list" start="1"><li>Enable authentication</li></ol><ol type="1" id="255c8354-9586-80ad-bc0b-ddaa48f123d2" class="numbered-list" start="2"><li>Create an admin user with full privileges</li></ol><ol type="1" id="255c8354-9586-800c-bacf-fc64eef82163" class="numbered-list" start="3"><li>Configure MongoDB to only accept connections from localhost (127.0.0.1)</li></ol><p id="255c8354-9586-8098-a02c-cae3e7f1d720" class="">You can customize the security settings with the following options:</p><ul id="255c8354-9586-808d-8f46-cf22069df1b5" class="bulleted-list"><li style="list-style-type:disc"><code>-no-auth</code>: Disable authentication</li></ul><ul id="255c8354-9586-805f-ab02-fc1d5f8145c2" class="bulleted-list"><li style="list-style-type:disc"><code>-admin-user USER</code>: Set admin username (will prompt if not provided)</li></ul><ul id="255c8354-9586-8044-987a-e5b592c6caaf" class="bulleted-list"><li style="list-style-type:disc"><code>-admin-pass PASS</code>: Set admin password (will prompt if not provided)</li></ul><ul id="255c8354-9586-801d-a1ca-cdc852029bd9" class="bulleted-list"><li style="list-style-type:disc"><code>-enable-tls</code>: Enable TLS/SSL for encrypted connections</li></ul><ul id="255c8354-9586-8072-b16a-eda82a4d7937" class="bulleted-list"><li style="list-style-type:disc"><code>-bind-ip IP</code>: Set bind IP address (default: 127.0.0.1)</li></ul><ul id="255c8354-9586-8041-9a7c-e03d3568e2ed" class="bulleted-list"><li style="list-style-type:disc"><code>-help</code>: Show usage information</li></ul><p id="255c8354-9586-8031-b8f3-c8f27b2f0f3f" class="">Example:</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="255c8354-9586-802e-9134-d592d8a8e117" class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all">./secure_mongodb.sh --admin-user admin --bind-ip 0.0.0.0
+</code></pre><p id="255c8354-9586-8023-ad09-d002f07a56bb" class="">After running the script, you&#x27;ll need to authenticate when connecting to MongoDB:</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="255c8354-9586-80db-b02d-cf62d3101d58" class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all">mongosh --authenticationDatabase admin -u &lt;username&gt; -p &lt;password&gt;
+</code></pre><h3 id="255c8354-9586-80fc-bfe7-e83a5793b961" class="">User Management</h3><p id="255c8354-9586-80e7-a72c-d564655b7fb4" class="">Once you&#x27;ve secured your MongoDB installation with authentication, you can use the user management script to create, delete, and list users:</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="255c8354-9586-808a-8258-cfd4f51ade24" class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all">./manage_users.sh
+</code></pre><p id="255c8354-9586-80f2-b9c7-db8b7856f155" class="">The script supports the following actions:</p><ol type="1" id="255c8354-9586-80c8-b759-ec98f12e525d" class="numbered-list" start="1"><li>Creating a new user:</li></ol><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="255c8354-9586-80c2-b970-d0d7efa2b7c7" class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all">./manage_users.sh --create --username myuser --password mypass --database mydb --roles readWrite,dbAdmin --admin-user admin --admin-pass adminpass
+</code></pre><ol type="1" id="255c8354-9586-807f-9861-e627c99f9336" class="numbered-list" start="1"><li>Deleting a user:</li></ol><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="255c8354-9586-80e8-ba79-f8d1e8ffe559" class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all">./manage_users.sh --delete --username myuser --database mydb --admin-user admin --admin-pass adminpass
+</code></pre><ol type="1" id="255c8354-9586-80b7-99d7-cc30cc99956a" class="numbered-list" start="1"><li>Listing all users:</li></ol><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="255c8354-9586-8041-b4d1-e8c44eba54e1" class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all">./manage_users.sh --list --admin-user admin --admin-pass adminpass
+</code></pre><p id="255c8354-9586-8064-965b-ceb424896feb" class="">Available options:</p><ul id="255c8354-9586-803e-9021-dab00e94dc4f" class="bulleted-list"><li style="list-style-type:disc"><code>-create</code>: Create a new user</li></ul><ul id="255c8354-9586-807f-a112-db24dc35b756" class="bulleted-list"><li style="list-style-type:disc"><code>-delete</code>: Delete an existing user</li></ul><ul id="255c8354-9586-80d1-9f51-ecaad7e792ea" class="bulleted-list"><li style="list-style-type:disc"><code>-list</code>: List all users</li></ul><ul id="255c8354-9586-80de-9c9c-e5d150f965ac" class="bulleted-list"><li style="list-style-type:disc"><code>-username USER</code>: Username for the operation</li></ul><ul id="255c8354-9586-801b-b96e-e5f2ef912086" class="bulleted-list"><li style="list-style-type:disc"><code>-password PASS</code>: Password for the new user</li></ul><ul id="255c8354-9586-8052-9a12-d0ba3c343c08" class="bulleted-list"><li style="list-style-type:disc"><code>-database DB</code>: Database for the user (default: admin)</li></ul><ul id="255c8354-9586-8019-a4c3-fedb30dec82b" class="bulleted-list"><li style="list-style-type:disc"><code>-roles ROLES</code>: Comma-separated list of roles (e.g., readWrite,dbAdmin)</li></ul><ul id="255c8354-9586-80af-8e3f-e2de7a6b6fd4" class="bulleted-list"><li style="list-style-type:disc"><code>-admin-user USER</code>: Admin username for authentication</li></ul><ul id="255c8354-9586-8080-a941-e8c267035754" class="bulleted-list"><li style="list-style-type:disc"><code>-admin-pass PASS</code>: Admin password for authentication</li></ul><ul id="255c8354-9586-803c-8f25-ff9298a72e1d" class="bulleted-list"><li style="list-style-type:disc"><code>-help</code>: Show usage information</li></ul><p id="255c8354-9586-80a1-92af-e2c76975bd84" class="">Common MongoDB roles include:</p><ul id="255c8354-9586-80c5-9e4c-fef7ddc4d044" class="bulleted-list"><li style="list-style-type:disc"><code>read</code>: Read-only access to a database</li></ul><ul id="255c8354-9586-8043-acb1-e73ce5f1b6b3" class="bulleted-list"><li style="list-style-type:disc"><code>readWrite</code>: Read and write access to a database</li></ul><ul id="255c8354-9586-8083-8299-d5826159fd48" class="bulleted-list"><li style="list-style-type:disc"><code>dbAdmin</code>: Database administration tasks</li></ul><ul id="255c8354-9586-800f-8308-e77bca5d16a7" class="bulleted-list"><li style="list-style-type:disc"><code>userAdmin</code>: User administration for a database</li></ul><ul id="255c8354-9586-8095-b236-d1da25cce17c" class="bulleted-list"><li style="list-style-type:disc"><code>clusterAdmin</code>: Cluster administration tasks</li></ul><ul id="255c8354-9586-80f7-8db7-f3de3682f31b" class="bulleted-list"><li style="list-style-type:disc"><code>readAnyDatabase</code>: Read-only access to all databases</li></ul><ul id="255c8354-9586-809d-b88d-c345b3607ae8" class="bulleted-list"><li style="list-style-type:disc"><code>readWriteAnyDatabase</code>: Read and write access to all databases</li></ul><ul id="255c8354-9586-80cb-8da6-e250748ad5b2" class="bulleted-list"><li style="list-style-type:disc"><code>userAdminAnyDatabase</code>: User administration for all databases</li></ul><ul id="255c8354-9586-80a0-a8ed-d90379ab609e" class="bulleted-list"><li style="list-style-type:disc"><code>dbAdminAnyDatabase</code>: Database administration for all databases</li></ul><h2 id="255c8354-9586-8077-9b04-f6e7d93889b6" class="">Performance Monitoring</h2><p id="255c8354-9586-80cb-8f1f-c16e31914f95" class="">To monitor the performance of your MongoDB installation, you can use the provided monitoring script:</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="255c8354-9586-80cd-a4a7-e780b0384303" class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all">./monitor_mongodb.sh
+</code></pre><p id="255c8354-9586-80c2-b0c9-ca65c8850a05" class="">By default, this script will collect performance metrics every 5 seconds for a total of 10 samples and display them on the console.</p><p id="255c8354-9586-80ee-8eaa-c5b70675accb" class="">You can customize the monitoring with the following options:</p><ul id="255c8354-9586-801a-890d-cf717d4be3a9" class="bulleted-list"><li style="list-style-type:disc"><code>-interval SECONDS</code>: Interval between checks in seconds (default: 5)</li></ul><ul id="255c8354-9586-805f-a99b-c0dc4a08cf13" class="bulleted-list"><li style="list-style-type:disc"><code>-count NUMBER</code>: Number of checks to perform (default: 10)</li></ul><ul id="255c8354-9586-8082-8eac-e168ee97b2ea" class="bulleted-list"><li style="list-style-type:disc"><code>-admin-user USER</code>: Admin username for authentication (if authentication is enabled)</li></ul><ul id="255c8354-9586-80a1-8dfe-e02245c870a4" class="bulleted-list"><li style="list-style-type:disc"><code>-admin-pass PASS</code>: Admin password for authentication (if authentication is enabled)</li></ul><ul id="255c8354-9586-8010-82a8-d8ce2ef27a9e" class="bulleted-list"><li style="list-style-type:disc"><code>-output FORMAT</code>: Output format: console, json, csv (default: console)</li></ul><ul id="255c8354-9586-8051-8240-db3615c89542" class="bulleted-list"><li style="list-style-type:disc"><code>-file PATH</code>: Output file path (if not specified, output to console)</li></ul><ul id="255c8354-9586-8040-a55c-def0a0a6ae06" class="bulleted-list"><li style="list-style-type:disc"><code>-help</code>: Show usage information</li></ul><p id="255c8354-9586-8036-93e8-f65fa72ee127" class="">Example:</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="255c8354-9586-80db-bb0c-c410b038a352" class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all">./monitor_mongodb.sh --interval 10 --count 30 --output csv --file mongodb_metrics.csv
+</code></pre><p id="255c8354-9586-80b8-af16-dc7fd926b9f8" class="">The monitoring script collects the following metrics:</p><ul id="255c8354-9586-80d1-8782-dd720442474b" class="bulleted-list"><li style="list-style-type:disc">Connection statistics (current, available, total created)</li></ul><ul id="255c8354-9586-807e-90f8-e417b6bc1bf7" class="bulleted-list"><li style="list-style-type:disc">Memory usage (resident, virtual, mapped)</li></ul><ul id="255c8354-9586-8089-824f-c3ee3350124f" class="bulleted-list"><li style="list-style-type:disc">Network traffic (bytes in/out, number of requests)</li></ul><ul id="255c8354-9586-8062-8d76-f8a20cc06e13" class="bulleted-list"><li style="list-style-type:disc">Operation counters (insert, query, update, delete, getmore, command)</li></ul><ul id="255c8354-9586-8020-b8d4-fc64e68110a1" class="bulleted-list"><li style="list-style-type:disc">Global lock queue (total, readers, writers)</li></ul><ul id="255c8354-9586-801e-aeee-db4368b9cc28" class="bulleted-list"><li style="list-style-type:disc">Database statistics (collections, objects, data size)</li></ul><p id="255c8354-9586-800b-8530-f90f6c1535d2" class="">This information can be useful for:</p><ul id="255c8354-9586-806b-8cf1-f838ac8ccb5d" class="bulleted-list"><li style="list-style-type:disc">Identifying performance bottlenecks</li></ul><ul id="255c8354-9586-805a-9054-f215e480eb0f" class="bulleted-list"><li style="list-style-type:disc">Monitoring resource usage</li></ul><ul id="255c8354-9586-8085-b8bf-e498ea38240f" class="bulleted-list"><li style="list-style-type:disc">Capacity planning</li></ul><ul id="255c8354-9586-806b-9d40-fa85ac5e0256" class="bulleted-list"><li style="list-style-type:disc">Troubleshooting issues</li></ul><h2 id="255c8354-9586-803a-bb5b-ded8f8ddeb7b" class="">Utility Scripts Summary</h2><p id="255c8354-9586-808e-8290-f16b3e9653c8" class="">This project includes several utility scripts to help you manage your MongoDB installation:</p><table id="255c8354-9586-80a7-bab4-feddd530be64" class="simple-table"><thead class="simple-table-header"><tr id="255c8354-9586-8026-b5f3-fe7a6237c04e"><th id="&gt;pys" class="simple-table-header-color simple-table-header">Script</th><th id="jVo^" class="simple-table-header-color simple-table-header">Description</th><th id="feN\" class="simple-table-header-color simple-table-header">Usage</th></tr></thead><tbody><tr id="255c8354-9586-809b-ba53-f9f6c5d80a0f"><td id="&gt;pys" class=""><code>install_mongodb.sh</code></td><td id="jVo^" class="">Installs MongoDB 5.0.3</td><td id="feN\" class=""><code>./install_mongodb.sh</code></td></tr><tr id="255c8354-9586-8047-9048-c7a250c993e1"><td id="&gt;pys" class=""><code>mongodb_status.sh</code></td><td id="jVo^" class="">Checks the status of MongoDB</td><td id="feN\" class=""><code>./mongodb_status.sh</code></td></tr><tr id="255c8354-9586-80f2-9a86-e307a703bc03"><td id="&gt;pys" class=""><code>test_mongodb.sh</code></td><td id="jVo^" class="">Tests the MongoDB installation</td><td id="feN\" class=""><code>./test_mongodb.sh</code></td></tr><tr id="255c8354-9586-80ab-8e24-dfd43947005c"><td id="&gt;pys" class=""><code>backup_mongodb.sh</code></td><td id="jVo^" class="">Creates a backup of MongoDB databases</td><td id="feN\" class=""><code>./backup_mongodb.sh [options]</code></td></tr><tr id="255c8354-9586-8074-837e-e4d28acc32d5"><td id="&gt;pys" class=""><code>restore_mongodb.sh</code></td><td id="jVo^" class="">Restores MongoDB from a backup</td><td id="feN\" class=""><code>./restore_mongodb.sh --path /path/to/backup [options]</code></td></tr><tr id="255c8354-9586-8065-9a15-dc619d1e8719"><td id="&gt;pys" class=""><code>update_mongodb.sh</code></td><td id="jVo^" class="">Updates MongoDB to a newer version</td><td id="feN\" class=""><code>./update_mongodb.sh</code></td></tr><tr id="255c8354-9586-8033-9e4b-f84bdf7f83b2"><td id="&gt;pys" class=""><code>uninstall_mongodb.sh</code></td><td id="jVo^" class="">Removes MongoDB from the system</td><td id="feN\" class=""><code>./uninstall_mongodb.sh</code></td></tr><tr id="255c8354-9586-80db-84e4-cc0e1652bbcb"><td id="&gt;pys" class=""><code>secure_mongodb.sh</code></td><td id="jVo^" class="">Configures security settings for MongoDB</td><td id="feN\" class=""><code>./secure_mongodb.sh [options]</code></td></tr><tr id="255c8354-9586-80a5-8872-d8e72ed3f427"><td id="&gt;pys" class=""><code>manage_users.sh</code></td><td id="jVo^" class="">Creates, deletes, and lists MongoDB users</td><td id="feN\" class=""><code>./manage_users.sh --action [options]</code></td></tr><tr id="255c8354-9586-804a-8582-fd219c2ef992"><td id="&gt;pys" class=""><code>monitor_mongodb.sh</code></td><td id="jVo^" class="">Monitors MongoDB performance metrics</td><td id="feN\" class=""><code>./monitor_mongodb.sh [options]</code></td></tr></tbody></table><p id="255c8354-9586-80af-9462-c8ccabf83fd4" class="">All scripts are designed to work together and provide a complete solution for managing MongoDB on Ubuntu 24.04.</p></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>

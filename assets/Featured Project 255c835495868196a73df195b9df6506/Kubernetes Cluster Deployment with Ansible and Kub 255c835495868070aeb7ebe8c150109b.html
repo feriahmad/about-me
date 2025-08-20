@@ -1,0 +1,721 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Kubernetes Cluster Deployment with Ansible and Kubeadm</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+	margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(50, 48, 44, 1);
+}
+.highlight-gray {
+	color: rgba(115, 114, 110, 1);
+	fill: rgba(115, 114, 110, 1);
+}
+.highlight-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.highlight-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.highlight-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.highlight-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.highlight-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(205, 60, 58, 1);
+	fill: rgba(205, 60, 58, 1);
+}
+.highlight-default_background {
+	color: rgba(50, 48, 44, 1);
+}
+.highlight-gray_background {
+	background: rgba(248, 248, 247, 1);
+}
+.highlight-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.highlight-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.highlight-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.highlight-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.highlight-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.highlight-purple_background {
+	background: rgba(248, 243, 252, 1);
+}
+.highlight-pink_background {
+	background: rgba(252, 241, 246, 1);
+}
+.highlight-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(115, 114, 110, 1);
+	fill: rgba(115, 114, 110, 1);
+}
+.block-color-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.block-color-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.block-color-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.block-color-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.block-color-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(205, 60, 58, 1);
+	fill: rgba(205, 60, 58, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(248, 248, 247, 1);
+}
+.block-color-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.block-color-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.block-color-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.block-color-purple_background {
+	background: rgba(248, 243, 252, 1);
+}
+.block-color-pink_background {
+	background: rgba(252, 241, 246, 1);
+}
+.block-color-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.select-value-color-default { background-color: rgba(84, 72, 49, 0.08); }
+.select-value-color-gray { background-color: rgba(84, 72, 49, 0.15); }
+.select-value-color-brown { background-color: rgba(210, 162, 141, 0.35); }
+.select-value-color-orange { background-color: rgba(224, 124, 57, 0.27); }
+.select-value-color-yellow { background-color: rgba(236, 191, 66, 0.39); }
+.select-value-color-green { background-color: rgba(123, 183, 129, 0.27); }
+.select-value-color-blue { background-color: rgba(93, 165, 206, 0.27); }
+.select-value-color-purple { background-color: rgba(168, 129, 197, 0.27); }
+.select-value-color-pink { background-color: rgba(225, 136, 179, 0.27); }
+.select-value-color-red { background-color: rgba(244, 171, 159, 0.4); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="255c8354-9586-8070-aeb7-ebe8c150109b" class="page sans"><header><img class="page-cover-image" src="Kubernetes%20Cluster%20Deployment%20with%20Ansible%20and%20Kub%20255c835495868070aeb7ebe8c150109b/Screenshot_2025-08-20_at_10.16.21.png" style="object-position:center 50%"/><h1 class="page-title"><strong>Kubernetes Cluster Deployment with Ansible and Kubeadm</strong></h1><p class="page-description"></p><table class="properties"><tbody><tr class="property-row property-row-created_time"><th><span class="icon property-icon"><div data-testid="/icons/clock_gray.svg" style="width:14px;height:14px;flex-shrink:0;transform:scale(1.2);mask:url(/icons/clock_gray.svg?mode=light) no-repeat center;-webkit-mask:url(/icons/clock_gray.svg?mode=light) no-repeat center;background-color:rgba(71, 70, 68, 0.6);fill:rgba(71, 70, 68, 0.6)"></div></span>Created</th><td><time>@August 20, 2025 10:02 AM</time></td></tr><tr class="property-row property-row-multi_select"><th><span class="icon property-icon"><div data-testid="/icons/list_gray.svg" style="width:14px;height:14px;flex-shrink:0;transform:scale(1.2);mask:url(/icons/list_gray.svg?mode=light) no-repeat center;-webkit-mask:url(/icons/list_gray.svg?mode=light) no-repeat center;background-color:rgba(71, 70, 68, 0.6);fill:rgba(71, 70, 68, 0.6)"></div></span>Tags</th><td><span class="selected-value select-value-color-pink">Ansible</span><span class="selected-value select-value-color-green">Docker</span><span class="selected-value select-value-color-purple">Kubeadm</span><span class="selected-value select-value-color-yellow">Kubernetes</span></td></tr><tr class="property-row property-row-text"><th><span class="icon property-icon"><div data-testid="/icons/description_gray.svg" style="width:14px;height:14px;flex-shrink:0;transform:scale(1.2);mask:url(/icons/description_gray.svg?mode=light) no-repeat center;-webkit-mask:url(/icons/description_gray.svg?mode=light) no-repeat center;background-color:rgba(71, 70, 68, 0.6);fill:rgba(71, 70, 68, 0.6)"></div></span>Description</th><td>Deployed a Kubernetes cluster using Ansible and Kubeadm to automate the provisioning and configuration process. This project demonstrated Infrastructure as Code practices, enabling consistent cluster setup, reduced manual intervention, and improved reliability for multi-node environments.</td></tr><tr class="property-row property-row-url"><th><span class="icon property-icon"><div data-testid="/icons/link_gray.svg" style="width:14px;height:14px;flex-shrink:0;transform:scale(1.2);mask:url(/icons/link_gray.svg?mode=light) no-repeat center;-webkit-mask:url(/icons/link_gray.svg?mode=light) no-repeat center;background-color:rgba(71, 70, 68, 0.6);fill:rgba(71, 70, 68, 0.6)"></div></span>Project URL</th><td><a href="https://github.com/feriahmad/k8s-kubeadm-ansible" class="url-value">https://github.com/feriahmad/k8s-kubeadm-ansible</a></td></tr></tbody></table></header><div class="page-body"><h1 id="255c8354-9586-80de-b23d-ff5bdfe98166" class="">Kubernetes Cluster Deployment with Ansible and Kubeadm</h1><p id="255c8354-9586-802e-b0de-e621cefd7700" class="">This repository contains Ansible playbooks to automate the deployment of a Kubernetes cluster using kubeadm.</p><h2 id="255c8354-9586-80b7-8cfc-e9d29f5cc718" class="">Prerequisites</h2><ul id="255c8354-9586-804b-8c53-ea80324adb6e" class="bulleted-list"><li style="list-style-type:disc">Ubuntu 22.04 on all nodes</li></ul><ul id="255c8354-9586-80a7-b1f7-c517171b67e8" class="bulleted-list"><li style="list-style-type:disc">SSH access to all nodes</li></ul><ul id="255c8354-9586-806e-93bc-efaedc5f17d8" class="bulleted-list"><li style="list-style-type:disc">Ansible 2.15.13 installed on the control node</li></ul><ul id="255c8354-9586-8047-abb8-e308b47edfa4" class="bulleted-list"><li style="list-style-type:disc">Minimum requirements for each node:<ul id="255c8354-9586-8036-a588-f9cb6726c364" class="bulleted-list"><li style="list-style-type:circle">2 CPU cores</li></ul><ul id="255c8354-9586-8070-865b-d348bd578e0d" class="bulleted-list"><li style="list-style-type:circle">2 GB RAM</li></ul><ul id="255c8354-9586-8082-aa41-fdbea6df5522" class="bulleted-list"><li style="list-style-type:circle">20 GB disk space</li></ul></li></ul><h3 id="255c8354-9586-80ce-a32f-d55a097ca6df" class="">Installing Ansible 2.15.13</h3><p id="255c8354-9586-80be-b104-d72f0a1de537" class="">To install Ansible 2.15.13 on the control node, run the following commands:</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="255c8354-9586-80b6-9f60-d2bec3d0319b" class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all"># Add the Ansible PPA repository
+sudo apt update
+sudo apt install -y software-properties-common
+sudo add-apt-repository --yes --update ppa:ansible/ansible
+
+# Install Ansible
+sudo apt install -y ansible
+
+# Verify the installation
+ansible --version
+</code></pre><p id="255c8354-9586-8027-acb7-d002bc8ec55c" class="">This installs Ansible via apt. Verify that the installed version is 2.15.13 or compatible.</p><h2 id="255c8354-9586-80ee-9a3a-f9372e1491b4" class="">Cluster Architecture</h2><ul id="255c8354-9586-8073-aa4a-ca7462dd0a3a" class="bulleted-list"><li style="list-style-type:disc">Master Node: Runs the Kubernetes control plane components</li></ul><ul id="255c8354-9586-80ac-b421-e1f455cb542e" class="bulleted-list"><li style="list-style-type:disc">Worker Nodes: Run the application workloads</li></ul><h2 id="255c8354-9586-803f-a3d9-c33afc67b92e" class="">Configuration</h2><h3 id="255c8354-9586-804a-90e5-cb9d94e0ce93" class="">Inventory</h3><p id="255c8354-9586-8037-b86a-d8b194297d82" class="">Edit the <code>inventory/hosts.yaml</code> file to specify your master and worker nodes:</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="255c8354-9586-80c9-8bb4-ef4bb17afcf4" class="code code-wrap"><code class="language-YAML" style="white-space:pre-wrap;word-break:break-all">---
+# Kubernetes Cluster Inventory
+
+kube_masters:
+  hosts:
+    kangdeploy-master1:
+      ansible_host: 10.184.0.2
+      ansible_user: ubuntu
+
+kube_workers:
+  hosts:
+    kangdeploy-worker1:
+      ansible_host: 10.184.0.5
+      ansible_user: ubuntu
+    kangdeploy-worker-2:
+      ansible_host: 10.148.0.2
+      ansible_user: ubuntu
+
+kubernetes:
+  children:
+    kube_masters:
+    kube_workers:
+</code></pre><h3 id="255c8354-9586-8034-b62d-e2c4960bbf90" class="">Variables</h3><p id="255c8354-9586-808b-960b-ce1a7cdba3a9" class="">Edit the <code>group_vars/all.yml</code> file to customize your Kubernetes deployment:</p><ul id="255c8354-9586-8020-9acf-da94b534c260" class="bulleted-list"><li style="list-style-type:disc">Kubernetes version</li></ul><ul id="255c8354-9586-80b1-b0a7-cbc695d463ec" class="bulleted-list"><li style="list-style-type:disc">Container runtime settings</li></ul><ul id="255c8354-9586-8071-ba7f-fe78fe7ec9bd" class="bulleted-list"><li style="list-style-type:disc">Network configuration</li></ul><ul id="255c8354-9586-80b6-bfb7-c499a2a1eee2" class="bulleted-list"><li style="list-style-type:disc">CNI plugin selection</li></ul><h2 id="255c8354-9586-801f-911f-d8cee756506a" class="">Deployment</h2><h3 id="255c8354-9586-80d3-8657-ea5b78c0e256" class="">1. Verify SSH connectivity to all nodes</h3><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="255c8354-9586-8042-8c02-c00c30876b40" class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all">ansible all -m ping
+</code></pre><p id="255c8354-9586-80d9-b11a-c106ea46708a" class="">Note: Since the default inventory is set in <code>ansible.cfg</code>, you don&#x27;t need to specify the inventory file with <code>-i</code>.</p><p id="255c8354-9586-8002-96a3-c67cca9fe0d5" class="">When connecting to hosts for the first time, you&#x27;ll be prompted to verify SSH host keys. This repository includes an <code>ansible.cfg</code> file that disables host key checking by default. If you still see prompts, you can handle them in these ways:</p><ol type="1" id="255c8354-9586-8058-9b6a-efd9515a88d3" class="numbered-list" start="1"><li>Manually accept the host keys by answering &quot;yes&quot; to the prompts</li></ol><ol type="1" id="255c8354-9586-8098-9189-db9fddb3144b" class="numbered-list" start="2"><li>Disable host key checking temporarily:<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="255c8354-9586-800f-aef4-e8621b9b82c7" class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all">ANSIBLE_HOST_KEY_CHECKING=False ansible -i inventory/hosts.yaml all -m ping</code></pre></li></ol><ol type="1" id="255c8354-9586-801b-835f-d7186ee08914" class="numbered-list" start="3"><li>Ensure you&#x27;re running the command from the repository root directory where the <code>ansible.cfg</code> file is located</li></ol><h3 id="255c8354-9586-80f7-919d-d6fda326992f" class="">2. Deploy the Kubernetes cluster</h3><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="255c8354-9586-8044-8650-f6851439116f" class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all">ansible-playbook site.yml
+</code></pre><p id="255c8354-9586-802d-aba1-f15fbd90c5c3" class="">Note: With the default inventory set in <code>ansible.cfg</code>, you don&#x27;t need to specify the inventory file with <code>-i</code>.</p><h3 id="255c8354-9586-8065-8ca1-c69968633577" class="">3. Verify the deployment</h3><p id="255c8354-9586-800c-8e9a-dd6667e3bc0f" class="">After the playbook completes, verify the cluster by running:</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="255c8354-9586-803f-8799-f3de5d555604" class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all"># On any node in the cluster (master or worker)
+kubectl get nodes
+kubectl cluster-info
+</code></pre><p id="255c8354-9586-8014-b25e-e1f36e528735" class="">The kubeconfig file is automatically distributed to all nodes, and the KUBECONFIG environment variable is set in the .bashrc file for both root and regular users. This allows you to use kubectl commands from any node without specifying the kubeconfig file path.</p><h3 id="255c8354-9586-804b-a8b2-d60daab09e58" class="">Verification Example: Nodes Ready</h3><figure id="255c8354-9586-803f-95d1-d34ba4f8b92a" class="image"><a href="https://www.notion.sokubectl%20get%20nodes%20ready.gif"><img src="https://www.notion.sokubectl%20get%20nodes%20ready.gif"/></a></figure><h3 id="255c8354-9586-80f1-8ac7-d1215ac7463c" class="">4. Deploy a test application</h3><p id="255c8354-9586-8037-b3aa-caa5164ba2da" class="">To verify that the cluster is working correctly, deploy the Nginx test application:</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="255c8354-9586-80aa-af16-dd9d282c6811" class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all">kubectl apply -f verify/deploy-nginx.yaml
+</code></pre><p id="255c8354-9586-802a-a5fd-db09355751ba" class="">Check that the pods are running:</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="255c8354-9586-80d6-81b8-f262e7ce08d8" class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all">kubectl get pods
+kubectl get services
+</code></pre><h3 id="255c8354-9586-80ee-8c75-ff8bdb7b8e95" class="">Verification Example: Nginx Deployment</h3><figure id="255c8354-9586-809c-bff0-e1ec139549c7" class="image"><a href="https://www.notion.sodeploy%20nginx%20app.gif"><img src="https://www.notion.sodeploy%20nginx%20app.gif"/></a></figure><h2 id="255c8354-9586-80e7-b27f-e939971c8bfa" class="">Roles</h2><ul id="255c8354-9586-80ec-832b-c81905897c3e" class="bulleted-list"><li style="list-style-type:disc"><strong>common</strong>: Prepares all nodes with the necessary prerequisites</li></ul><ul id="255c8354-9586-80a7-ae65-eb63204b5574" class="bulleted-list"><li style="list-style-type:disc"><strong>kubernetes-master</strong>: Initializes the Kubernetes control plane and distributes kubeconfig</li></ul><ul id="255c8354-9586-804c-a99b-c0f95e1a6cac" class="bulleted-list"><li style="list-style-type:disc"><strong>kubernetes-worker</strong>: Joins worker nodes to the cluster and sets up kubeconfig for kubectl access</li></ul><h2 id="255c8354-9586-8083-819f-ea709e7aa04b" class="">Troubleshooting</h2><p id="255c8354-9586-80c3-b518-ff52b6a370d9" class="">If you encounter issues during deployment:</p><ol type="1" id="255c8354-9586-801c-8639-df61fa745034" class="numbered-list" start="1"><li>Check the Ansible logs for errors</li></ol><ol type="1" id="255c8354-9586-8097-ae31-c867cd9471a1" class="numbered-list" start="2"><li>Verify that all prerequisites are met</li></ol><ol type="1" id="255c8354-9586-8075-81cd-fbca3321a486" class="numbered-list" start="3"><li>Check the Kubernetes logs on the affected nodes:<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="255c8354-9586-800f-ab48-d93c244eccb1" class="code code-wrap"><code class="language-Bash" style="white-space:pre-wrap;word-break:break-all">journalctl -xeu kubelet</code></pre></li></ol><h3 id="255c8354-9586-802f-a9a3-c6ebce81bbf6" class="">Installation Method</h3><p id="255c8354-9586-80c6-b8cb-db8e95b5d7a2" class="">This playbook installs Kubernetes components (kubelet, kubeadm, kubectl) directly from the official Google Cloud Storage bucket instead of using apt repositories. This approach avoids repository compatibility issues with Ubuntu 22.04 and ensures you get the exact version specified.</p><p id="255c8354-9586-8000-84ce-e3bfe7eb281a" class="">The playbook also installs all required dependencies for Kubernetes:</p><ul id="255c8354-9586-8008-b3c5-dcc77fc063b3" class="bulleted-list"><li style="list-style-type:disc">containerd (container runtime)</li></ul><ul id="255c8354-9586-8037-97dc-f1cc47f887a0" class="bulleted-list"><li style="list-style-type:disc">crictl (CRI command-line tool)</li></ul><ul id="255c8354-9586-8039-b7f5-f3ccc1d1357d" class="bulleted-list"><li style="list-style-type:disc">socat (required for port forwarding)</li></ul><ul id="255c8354-9586-8050-bf46-fbeddaf095db" class="bulleted-list"><li style="list-style-type:disc">conntrack (required for network connection tracking)</li></ul><p id="255c8354-9586-8011-834a-cd46fb0d05cf" class="">For networking, the playbook installs Calico CNI plugin directly from the official GitHub repository.</p><p id="255c8354-9586-80d2-a6f8-d4562ab022be" class="">
+</p><p id="255c8354-9586-801d-ab13-d460408e3439" class="">Github Repository: <a href="https://github.com/feriahmad/k8s-kubeadm-ansible">https://github.com/feriahmad/k8s-kubeadm-ansible</a></p></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>
